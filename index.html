@@ -3,34 +3,50 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Content Browser - UE5 Style</title>
+    <title>Content Browser</title>
     <style>
+        :root {
+            --color-primary: rgb(59, 130, 246);
+            --color-primary-hover: rgb(37, 99, 235);
+            --text-primary: rgb(255, 255, 255);
+            --text-secondary: rgb(229, 231, 235);
+            --text-muted: rgb(156, 163, 175);
+            --bg-surface: rgb(17, 24, 39);
+            --bg-elevated: rgb(31, 41, 55);
+            --bg-hover: rgb(55, 65, 81);
+            --border-color: rgb(75, 85, 99);
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            --radius-sm: 4px;
+            --radius-md: 6px;
+            --radius-lg: 8px;
+            --font-size-xs: 11px;
+            --font-size-sm: 12px;
+            --font-size-base: 14px;
+            --font-size-lg: 16px;
+            --line-height-tight: 20px;
+            --line-height-normal: 24px;
+            --space-xs: 4px;
+            --space-sm: 8px;
+            --space-md: 12px;
+            --space-lg: 16px;
+            --space-xl: 24px;
+        }
+
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
         }
 
-        :root {
-            --ue5-dark: #121212;
-            --ue5-darker: #0a0a0a;
-            --ue5-light: #2d2d2d;
-            --ue5-blue: #007acc;
-            --ue5-blue-hover: #0099ff;
-            --ue5-text: #e0e0e0;
-            --ue5-text-muted: #a0a0a0;
-            --ue5-border: #3d3d3d;
-            --ue5-highlight: #1e3a5f;
-            --ue5-success: #4caf50;
-            --ue5-warning: #ff9800;
-        }
-
         body {
-            font-family: 'Roboto', 'Segoe UI', sans-serif;
-            background: var(--ue5-dark);
-            color: var(--ue5-text);
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background: var(--bg-surface);
+            color: var(--text-primary);
             height: 100vh;
             overflow: hidden;
+            font-size: var(--font-size-base);
+            line-height: var(--line-height-tight);
         }
 
         .content-browser {
@@ -39,145 +55,135 @@
             height: 100vh;
         }
 
-        /* 顶部工具栏 */
-        .toolbar {
-            background: var(--ue5-darker);
-            border-bottom: 1px solid var(--ue5-border);
-            padding: 8px 16px;
+        .header {
+            background: var(--bg-elevated);
+            border-bottom: 1px solid var(--border-color);
+            padding: var(--space-sm) var(--space-lg);
             display: flex;
             align-items: center;
-            gap: 12px;
+            justify-content: space-between;
+            min-height: 40px;
         }
 
-        .toolbar-left {
+        .header__left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: var(--space-sm);
         }
 
-        .toolbar-center {
-            flex: 1;
+        .header__logo {
+            width: 16.67px;
+            height: 15px;
+            background: var(--color-primary);
+            border-radius: 2px;
+        }
+
+        .header__title {
+            font-size: var(--font-size-base);
+            font-weight: 600;
+            color: var(--text-primary);
+            line-height: var(--line-height-tight);
+        }
+
+        .header__right {
             display: flex;
             align-items: center;
-        }
-
-        .search-box {
-            flex: 1;
-            max-width: 400px;
-            position: relative;
-        }
-
-        .search-input {
-            width: 100%;
-            background: var(--ue5-light);
-            border: 1px solid var(--ue5-border);
-            border-radius: 4px;
-            padding: 6px 12px 6px 32px;
-            color: var(--ue5-text);
-            font-size: 14px;
-        }
-
-        .search-icon {
-            position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--ue5-text-muted);
-        }
-
-        .toolbar-right {
-            display: flex;
-            align-items: center;
-            gap: 8px;
+            gap: var(--space-sm);
         }
 
         .btn {
-            background: var(--ue5-light);
-            border: 1px solid var(--ue5-border);
-            border-radius: 4px;
-            padding: 6px 12px;
-            color: var(--ue5-text);
-            font-size: 12px;
+            background: var(--bg-hover);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: var(--space-xs) var(--space-sm);
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
             cursor: pointer;
             transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: var(--space-xs);
         }
 
         .btn:hover {
-            background: var(--ue5-blue);
-            border-color: var(--ue5-blue);
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--text-primary);
         }
 
-        .btn-primary {
-            background: var(--ue5-blue);
-            border-color: var(--ue5-blue);
+        .btn--icon {
+            padding: var(--space-xs);
+            width: 23px;
+            height: 23px;
+            justify-content: center;
         }
 
-        .btn-primary:hover {
-            background: var(--ue5-blue-hover);
-        }
-
-        /* 主要内容区域 */
         .main-content {
             flex: 1;
             display: flex;
             overflow: hidden;
         }
 
-        /* 左侧文件夹导航 */
-        .folder-nav {
+        .sidebar {
             width: 240px;
-            background: var(--ue5-darker);
-            border-right: 1px solid var(--ue5-border);
+            background: var(--bg-elevated);
+            border-right: 1px solid var(--border-color);
             display: flex;
             flex-direction: column;
         }
 
-        .nav-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--ue5-border);
+        .sidebar__header {
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--border-color);
             font-weight: 600;
-            font-size: 14px;
-            color: var(--ue5-text);
+            font-size: var(--font-size-sm);
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
         .folder-tree {
             flex: 1;
             overflow-y: auto;
-            padding: 8px 0;
+            padding: var(--space-sm) 0;
         }
 
         .folder-item {
-            padding: 6px 16px;
+            padding: var(--space-sm) var(--space-lg);
             cursor: pointer;
-            font-size: 13px;
+            font-size: var(--font-size-sm);
             transition: background 0.2s ease;
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: var(--space-sm);
+            color: var(--text-secondary);
         }
 
         .folder-item:hover {
-            background: var(--ue5-highlight);
+            background: var(--bg-hover);
         }
 
         .folder-item.active {
-            background: var(--ue5-blue);
+            background: rgba(59, 130, 246, 0.1);
+            color: var(--color-primary);
+            border-left: 2px solid var(--color-primary);
+            padding-left: calc(var(--space-lg) - 2px);
         }
 
-        .folder-item .icon {
+        .folder-item__icon {
             font-size: 14px;
+            opacity: 0.8;
         }
 
-        .folder-item .subfolders {
+        .folder-item__subfolders {
             margin-left: 20px;
             display: none;
         }
 
-        .folder-item.expanded .subfolders {
+        .folder-item.expanded .folder-item__subfolders {
             display: block;
         }
 
-        /* 右侧资产显示区域 */
         .asset-view {
             flex: 1;
             display: flex;
@@ -185,205 +191,243 @@
             overflow: hidden;
         }
 
-        .asset-header {
-            padding: 12px 16px;
-            border-bottom: 1px solid var(--ue5-border);
+        .asset-view__header {
+            padding: var(--space-md) var(--space-lg);
+            border-bottom: 1px solid var(--border-color);
             display: flex;
             justify-content: space-between;
             align-items: center;
+            background: var(--bg-surface);
         }
 
         .asset-path {
-            font-size: 14px;
-            color: var(--ue5-text-muted);
+            font-size: var(--font-size-sm);
+            color: var(--text-muted);
         }
 
         .view-controls {
             display: flex;
-            gap: 8px;
+            gap: var(--space-xs);
+        }
+
+        .view-controls .btn {
+            padding: var(--space-xs) var(--space-sm);
+        }
+
+        .view-controls .btn.active {
+            background: var(--color-primary);
+            border-color: var(--color-primary);
+            color: var(--text-primary);
         }
 
         .asset-grid {
             flex: 1;
             overflow-y: auto;
-            padding: 16px;
+            padding: var(--space-lg);
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 16px;
+            gap: var(--space-md);
         }
 
         .asset-item {
-            background: var(--ue5-light);
-            border-radius: 4px;
-            padding: 8px;
+            background: var(--bg-elevated);
+            border-radius: var(--radius-md);
+            padding: var(--space-sm);
             text-align: center;
             cursor: pointer;
             transition: all 0.2s ease;
             border: 2px solid transparent;
+            position: relative;
         }
 
         .asset-item:hover {
-            background: var(--ue5-highlight);
-            border-color: var(--ue5-blue);
+            background: var(--bg-hover);
+            border-color: var(--color-primary);
+            transform: translateY(-2px);
+            box-shadow: var(--shadow-md);
         }
 
         .asset-item.selected {
-            border-color: var(--ue5-blue);
-            background: var(--ue5-highlight);
+            border-color: var(--color-primary);
+            background: rgba(59, 130, 246, 0.1);
         }
 
-        .asset-thumbnail {
+        .asset-item__thumbnail {
             width: 100%;
             height: 80px;
-            background: var(--ue5-darker);
-            border-radius: 4px;
+            background: var(--bg-surface);
+            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: 8px;
-            font-size: 24px;
+            margin-bottom: var(--space-sm);
+            font-size: 32px;
+            color: var(--text-muted);
         }
 
-        .asset-name {
-            font-size: 12px;
-            color: var(--ue5-text);
+        .asset-item__name {
+            font-size: var(--font-size-xs);
+            color: var(--text-secondary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+            font-weight: 500;
         }
 
-        .asset-type {
+        .asset-item__type {
             font-size: 10px;
-            color: var(--ue5-text-muted);
+            color: var(--text-muted);
             margin-top: 2px;
+            text-transform: uppercase;
         }
 
-        /* 底部状态栏 */
         .status-bar {
-            background: var(--ue5-darker);
-            border-top: 1px solid var(--ue5-border);
-            padding: 6px 16px;
-            font-size: 12px;
-            color: var(--ue5-text-muted);
+            background: var(--bg-elevated);
+            border-top: 1px solid var(--border-color);
+            padding: var(--space-xs) var(--space-lg);
+            font-size: var(--font-size-xs);
+            color: var(--text-muted);
             display: flex;
             justify-content: space-between;
+            min-height: 24px;
         }
 
-        .status-left {
+        .status-bar__left {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: var(--space-lg);
         }
 
-        .status-right {
+        .status-bar__right {
             display: flex;
             align-items: center;
-            gap: 16px;
+            gap: var(--space-lg);
         }
 
-        /* 滚动条样式 */
+        .search-box {
+            position: relative;
+            flex: 1;
+            max-width: 300px;
+        }
+
+        .search-box__input {
+            width: 100%;
+            background: var(--bg-surface);
+            border: 1px solid var(--border-color);
+            border-radius: var(--radius-sm);
+            padding: var(--space-xs) var(--space-sm) var(--space-xs) 28px;
+            color: var(--text-secondary);
+            font-size: var(--font-size-sm);
+            transition: border-color 0.2s ease;
+        }
+
+        .search-box__input:focus {
+            outline: none;
+            border-color: var(--color-primary);
+        }
+
+        .search-box__icon {
+            position: absolute;
+            left: var(--space-sm);
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            font-size: 12px;
+        }
+
         ::-webkit-scrollbar {
-            width: 8px;
+            width: 6px;
+            height: 6px;
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--ue5-darker);
+            background: var(--bg-surface);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--ue5-light);
-            border-radius: 4px;
+            background: var(--bg-hover);
+            border-radius: 3px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--ue5-border);
+            background: var(--border-color);
         }
 
-        /* 响应式设计 */
         @media (max-width: 768px) {
-            .folder-nav {
+            .sidebar {
                 width: 200px;
             }
             
             .asset-grid {
                 grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: 12px;
+                gap: var(--space-sm);
             }
         }
     </style>
 </head>
 <body>
     <div class="content-browser">
-        <!-- 顶部工具栏 -->
-        <div class="toolbar">
-            <div class="toolbar-left">
-                <div style="font-weight: 600; font-size: 14px; color: var(--ue5-blue);">Content Browser</div>
-                <button class="btn">New</button>
-                <button class="btn">Import</button>
+        <header class="header">
+            <div class="header__left">
+                <div class="header__logo"></div>
+                <h1 class="header__title">Content Browser</h1>
             </div>
             
-            <div class="toolbar-center">
-                <div class="search-box">
-                    <span class="search-icon">🔍</span>
-                    <input type="text" class="search-input" placeholder="搜索资产...">
-                </div>
+            <div class="header__right">
+                <button class="btn btn--icon" title="Settings">
+                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M7.5 0C6.672 0 6 0.672 6 1.5V2.058C5.394 2.226 4.826 2.494 4.314 2.842L3.879 2.407C3.293 1.821 2.343 1.821 1.757 2.407L1.407 2.757C0.821 3.343 0.821 4.293 1.407 4.879L1.842 5.314C1.494 5.826 1.226 6.394 1.058 7H0.5C0.224 7 0 7.224 0 7.5V8C0 8.276 0.224 8.5 0.5 8.5H1.058C1.226 9.106 1.494 9.674 1.842 10.186L1.407 10.621C0.821 11.207 0.821 12.157 1.407 12.743L1.757 13.093C2.343 13.679 3.293 13.679 3.879 13.093L4.314 12.658C4.826 13.006 5.394 13.274 6 13.442V14C6 14.328 6.672 15 7.5 15H8C8.828 15 9.5 14.328 9.5 13.5V12.942C10.106 12.774 10.674 12.506 11.186 12.158L11.621 12.593C12.207 13.179 13.157 13.179 13.743 12.593L14.093 12.243C14.679 11.657 14.679 10.707 14.093 10.121L13.658 9.686C14.006 9.174 14.274 8.606 14.442 8H15C15.276 8 15.5 7.776 15.5 7.5V7C15.5 6.724 15.276 6.5 15 6.5H14.442C14.274 5.894 14.006 5.326 13.658 4.814L14.093 4.379C14.679 3.793 14.679 2.843 14.093 2.257L13.743 1.907C13.157 1.321 12.207 1.321 11.621 1.907L11.186 2.342C10.674 1.994 10.106 1.726 9.5 1.558V1C9.5 0.672 8.828 0 8 0H7.5ZM7.5 1H8C8.276 1 8.5 1.224 8.5 1.5V2.158L9.646 2.418L10.371 1.693C10.566 1.498 10.882 1.498 11.077 1.693L11.427 2.043C11.622 2.238 11.622 2.554 11.427 2.749L10.702 3.474L10.962 4.62H14C14.276 4.62 14.5 4.844 14.5 5.12V7C14.5 7.276 14.276 7.5 14 7.5H10.962L10.702 8.646L11.427 9.371C11.622 9.566 11.622 9.882 11.427 10.077L11.077 10.427C10.882 10.622 10.566 10.622 10.371 10.427L9.646 9.702L8.5 9.962V14C8.5 14.276 8.276 14.5 8 14.5H7.5C7.224 14.5 7 14.276 7 14V9.962L5.854 9.702L5.129 10.427C4.934 10.622 4.618 10.622 4.423 10.427L4.073 10.077C3.878 9.882 3.878 9.566 4.073 9.371L4.798 8.646L4.538 7.5H1C0.724 7.5 0.5 7.276 0.5 7V5.12C0.5 4.844 0.724 4.62 1 4.62H4.538L4.798 3.474L4.073 2.749C3.878 2.554 3.878 2.238 4.073 2.043L4.423 1.693C4.618 1.498 4.934 1.498 5.129 1.693L5.854 2.418L7 2.158V1.5C7 1.224 7.224 1 7.5 1ZM7.5 5C6.119 5 5 6.119 5 7.5C5 8.881 6.119 10 7.5 10C8.881 10 10 8.881 10 7.5C10 6.119 8.881 5 7.5 5Z" fill="currentColor"/>
+                    </svg>
+                </button>
             </div>
-            
-            <div class="toolbar-right">
-                <button class="btn">Filter</button>
-                <button class="btn btn-primary">Refresh</button>
-            </div>
-        </div>
+        </header>
 
-        <!-- 主要内容区域 -->
         <div class="main-content">
-            <!-- 左侧文件夹导航 -->
-            <div class="folder-nav">
-                <div class="nav-header">Folders</div>
+            <aside class="sidebar">
+                <div class="sidebar__header">Folders</div>
                 <div class="folder-tree">
                     <div class="folder-item active">
-                        <span class="icon">📁</span>
+                        <span class="folder-item__icon">📁</span>
                         <span>Content</span>
-                        <div class="subfolders">
+                        <div class="folder-item__subfolders">
                             <div class="folder-item">
-                                <span class="icon">📁</span>
+                                <span class="folder-item__icon">📁</span>
                                 <span>Blueprints</span>
                             </div>
                             <div class="folder-item">
-                                <span class="icon">📁</span>
+                                <span class="folder-item__icon">📁</span>
                                 <span>Materials</span>
                             </div>
                             <div class="folder-item">
-                                <span class="icon">📁</span>
+                                <span class="folder-item__icon">📁</span>
                                 <span>Textures</span>
                             </div>
                             <div class="folder-item">
-                                <span class="icon">📁</span>
+                                <span class="folder-item__icon">📁</span>
                                 <span>Meshes</span>
                             </div>
                             <div class="folder-item">
-                                <span class="icon">📁</span>
+                                <span class="folder-item__icon">📁</span>
                                 <span>Animations</span>
                             </div>
                         </div>
                     </div>
                     <div class="folder-item">
-                        <span class="icon">📁</span>
+                        <span class="folder-item__icon">📁</span>
                         <span>Plugins</span>
                     </div>
                     <div class="folder-item">
-                        <span class="icon">📁</span>
+                        <span class="folder-item__icon">📁</span>
                         <span>ThirdParty</span>
                     </div>
                 </div>
-            </div>
+            </aside>
 
-            <!-- 右侧资产显示区域 -->
-            <div class="asset-view">
-                <div class="asset-header">
+            <main class="asset-view">
+                <div class="asset-view__header">
                     <div class="asset-path">/Game/Content</div>
                     <div class="view-controls">
-                        <button class="btn">Grid</button>
+                        <button class="btn active">Grid</button>
                         <button class="btn">List</button>
                         <button class="btn">Details</button>
                     </div>
@@ -391,73 +435,68 @@
                 
                 <div class="asset-grid">
                     <div class="asset-item">
-                        <div class="asset-thumbnail">🏗️</div>
-                        <div class="asset-name">BP_Character</div>
-                        <div class="asset-type">Blueprint</div>
+                        <div class="asset-item__thumbnail">🏗️</div>
+                        <div class="asset-item__name">BP_Character</div>
+                        <div class="asset-item__type">Blueprint</div>
                     </div>
                     <div class="asset-item">
-                        <div class="asset-thumbnail">🎨</div>
-                        <div class="asset-name">M_Metal</div>
-                        <div class="asset-type">Material</div>
+                        <div class="asset-item__thumbnail">🎨</div>
+                        <div class="asset-item__name">M_Metal</div>
+                        <div class="asset-item__type">Material</div>
                     </div>
                     <div class="asset-item">
-                        <div class="asset-thumbnail">🖼️</div>
-                        <div class="asset-name">T_Brick</div>
-                        <div class="asset-type">Texture</div>
+                        <div class="asset-item__thumbnail">🖼️</div>
+                        <div class="asset-item__name">T_Brick</div>
+                        <div class="asset-item__type">Texture</div>
                     </div>
                     <div class="asset-item">
-                        <div class="asset-thumbnail">🔲</div>
-                        <div class="asset-name">SM_Cube</div>
-                        <div class="asset-type">Static Mesh</div>
+                        <div class="asset-item__thumbnail">🔲</div>
+                        <div class="asset-item__name">SM_Cube</div>
+                        <div class="asset-item__type">Static Mesh</div>
                     </div>
                     <div class="asset-item">
-                        <div class="asset-thumbnail">🏃</div>
-                        <div class="asset-name">A_Run</div>
-                        <div class="asset-type">Animation</div>
+                        <div class="asset-item__thumbnail">🏃</div>
+                        <div class="asset-item__name">A_Run</div>
+                        <div class="asset-item__type">Animation</div>
                     </div>
                     <div class="asset-item">
-                        <div class="asset-thumbnail">🏗️</div>
-                        <div class="asset-name">BP_Weapon</div>
-                        <div class="asset-type">Blueprint</div>
+                        <div class="asset-item__thumbnail">🏗️</div>
+                        <div class="asset-item__name">BP_Weapon</div>
+                        <div class="asset-item__type">Blueprint</div>
                     </div>
                     <div class="asset-item">
-                        <div class="asset-thumbnail">🎨</div>
-                        <div class="asset-name">M_Wood</div>
-                        <div class="asset-type">Material</div>
+                        <div class="asset-item__thumbnail">🎨</div>
+                        <div class="asset-item__name">M_Wood</div>
+                        <div class="asset-item__type">Material</div>
                     </div>
                     <div class="asset-item">
-                        <div class="asset-thumbnail">🖼️</div>
-                        <div class="asset-name">T_Grass</div>
-                        <div class="asset-type">Texture</div>
+                        <div class="asset-item__thumbnail">🖼️</div>
+                        <div class="asset-item__name">T_Grass</div>
+                        <div class="asset-item__type">Texture</div>
                     </div>
                 </div>
-            </div>
+            </main>
         </div>
 
-        <!-- 底部状态栏 -->
-        <div class="status-bar">
-            <div class="status-left">
+        <footer class="status-bar">
+            <div class="status-bar__left">
                 <span>8 assets found</span>
                 <span>Filter: All</span>
             </div>
-            <div class="status-right">
+            <div class="status-bar__right">
                 <span>View: Grid</span>
                 <span>Sort: Name</span>
             </div>
-        </div>
+        </footer>
     </div>
 
     <script>
-        // 文件夹展开/折叠功能
         document.querySelectorAll('.folder-item').forEach(item => {
             item.addEventListener('click', function(e) {
-                // 防止点击子元素时触发父元素的点击事件
                 if (e.target !== this && !this.contains(e.target)) return;
                 
-                // 切换展开状态
                 this.classList.toggle('expanded');
                 
-                // 切换活动状态
                 document.querySelectorAll('.folder-item').forEach(folder => {
                     folder.classList.remove('active');
                 });
@@ -465,7 +504,6 @@
             });
         });
 
-        // 资产选择功能
         document.querySelectorAll('.asset-item').forEach(item => {
             item.addEventListener('click', function() {
                 document.querySelectorAll('.asset-item').forEach(asset => {
@@ -475,28 +513,12 @@
             });
         });
 
-        // 搜索功能
-        const searchInput = document.querySelector('.search-input');
-        searchInput.addEventListener('input', function() {
-            const searchTerm = this.value.toLowerCase();
-            const assetItems = document.querySelectorAll('.asset-item');
-            
-            assetItems.forEach(item => {
-                const assetName = item.querySelector('.asset-name').textContent.toLowerCase();
-                if (assetName.includes(searchTerm)) {
-                    item.style.display = 'block';
-                } else {
-                    item.style.display = 'none';
-                }
-            });
-        });
-
-        // 视图切换功能
-        const viewButtons = document.querySelectorAll('.view-controls .btn');
-        viewButtons.forEach(button => {
+        document.querySelectorAll('.view-controls .btn').forEach(button => {
             button.addEventListener('click', function() {
-                viewButtons.forEach(btn => btn.style.background = 'var(--ue5-light)');
-                this.style.background = 'var(--ue5-blue)';
+                document.querySelectorAll('.view-controls .btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                this.classList.add('active');
                 
                 const assetGrid = document.querySelector('.asset-grid');
                 if (this.textContent === 'List') {
@@ -505,16 +527,6 @@
                     assetGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(120px, 1fr))';
                 }
             });
-        });
-
-        // 模拟刷新功能
-        document.querySelector('.btn-primary').addEventListener('click', function() {
-            const statusLeft = document.querySelector('.status-left span:first-child');
-            statusLeft.textContent = 'Refreshing...';
-            
-            setTimeout(() => {
-                statusLeft.textContent = '8 assets found';
-            }, 1000);
         });
     </script>
 </body>
