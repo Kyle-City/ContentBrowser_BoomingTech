@@ -1333,6 +1333,105 @@
         .asset-card.type-model .tooltip-type {
             color: #2D9CDB;
         }
+
+        /* Asset Card - Type: Folder (White) */
+        .asset-card.type-folder {
+            background: transparent;
+            border: 1px solid transparent;
+            box-shadow: none;
+        }
+
+        .asset-card.type-folder:hover {
+            border-color: rgba(255, 255, 255, 0.5);
+        }
+
+        .asset-card.type-folder.selected {
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid #FFFFFF;
+            box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        /* Folder specific layout */
+        .folder-card-content {
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+        }
+
+        .folder-check-icon {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 9999px;
+            background-color: #FFFFFF;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transition: opacity 0.2s;
+            z-index: 10;
+        }
+
+        .asset-card.selected .folder-check-icon {
+            opacity: 1;
+        }
+
+        .folder-check-icon img {
+            width: 12px;
+            height: 12px;
+            object-fit: contain;
+        }
+
+        .folder-top-empty {
+            width: 144px;
+            height: 25px;
+            flex-shrink: 0;
+        }
+
+        .folder-image {
+            width: 144px;
+            height: 123px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .folder-image img {
+            width: 144px;
+            height: 123px;
+            object-fit: contain;
+        }
+
+        .folder-name {
+            width: 144px;
+            height: 18px;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 500;
+            font-size: 13px;
+            line-height: 1.5em;
+            color: #FFFFFF;
+        }
+
+        .folder-bottom-empty {
+            width: 144px;
+            height: 22px;
+            flex-shrink: 0;
+        }
+
+        .asset-card.type-folder .tooltip-type {
+            color: #FFFFFF;
+        }
     </style>
 </head>
 <body>
@@ -1503,7 +1602,8 @@
                 { id: 's2', name: 'SFX_SwordHit', type: 'Audio', path: '/Content/Audio/SFX', size: '3.2 MB', format: 'WAV', lastModified: '2023-10-28', parentId: 'audio' },
                 { id: 'mat1', name: 'M_Grass', type: 'Material', path: '/Content/Materials', size: '8.2 MB', format: 'Mat', lastModified: '2023-10-29', parentId: 'materials' },
                 { id: 'mod1', name: 'SM_Crate', type: 'Model', path: '/Content/Models', size: '71.6 MB', format: 'OBJ', lastModified: '2023-10-30', parentId: 'models' },
-                { id: 'm2', name: 'SK_Mage', type: 'Model', path: '/Content/Characters/Mage', size: '38.7 MB', format: 'FBX', lastModified: '2023-10-22', parentId: 'models' }
+                { id: 'm2', name: 'SK_Mage', type: 'Model', path: '/Content/Characters/Mage', size: '38.7 MB', format: 'FBX', lastModified: '2023-10-22', parentId: 'models' },
+                { id: 'f1', name: 'VFX', type: 'Folder', path: '/Content/VFX', size: 'N/A', format: 'Folder', lastModified: '2023-11-03', parentId: 'root' }
             ],
             favorites: [
                 { id: 'fav1', name: 'Characters', path: '/Content/Characters' },
@@ -1811,6 +1911,10 @@
                     let cardType, typeIcon, thumbnailIcon, checkIcon, tagText, typeLabel;
                     
                     switch(asset.type) {
+                        case 'Folder':
+                            cardType = 'type-folder';
+                            typeLabel = 'Folder';
+                            break;
                         case 'Anim':
                             cardType = 'type-anim';
                             typeIcon = 'image/content/2_2.png';
@@ -1854,75 +1958,119 @@
                             break;
                     }
                     
-                    return `
-                        <div class="asset-card ${cardType} ${isSelected ? 'selected' : ''}" data-asset-id="${asset.id}">
-                            <div class="asset-card-content">
-                                <div class="asset-thumbnail">
-                                    <div class="asset-type-icon">
-                                        <img src="${typeIcon}" alt="Type" width="12" height="12">
-                                    </div>
-                                    <div class="asset-check-icon">
-                                        <img src="${checkIcon}" alt="Selected" width="12" height="12">
-                                    </div>
-                                    <div class="asset-thumbnail-icon">
-                                        <img src="${thumbnailIcon}" alt="${asset.type}" width="45" height="45">
-                                    </div>
-                                    <div class="asset-type-tag">
-                                        <span>${tagText}</span>
-                                    </div>
+                    if (asset.type === 'Folder') {
+                        return `
+                            <div class="asset-card ${cardType} ${isSelected ? 'selected' : ''}" data-asset-id="${asset.id}">
+                                <div class="folder-card-content">
+                                    <div class="folder-top-empty"></div>
+                                    <div class="folder-image"><img src="image/content/6_1.png" alt="Folder"></div>
+                                    <div class="folder-name">${asset.name}</div>
+                                    <div class="folder-bottom-empty"></div>
+                                    <div class="folder-check-icon"><img src="image/content/6_3.png" alt="Selected"></div>
                                 </div>
-                                <div class="asset-info">
-                                    <div class="asset-name" title="${asset.name}">${asset.name}</div>
-                                    <div class="asset-meta">
-                                        <span class="asset-type-label">${typeLabel}</span>
-                                        <span class="asset-size">${asset.size}</span>
+                                <div class="tooltip hidden right">
+                                    <div class="tooltip-header">
+                                        <div class="tooltip-title">${asset.name}</div>
+                                        <div class="tooltip-type">${asset.type}</div>
                                     </div>
-                                </div>
-                            </div>
-                            <div class="tooltip hidden right">
-                                <div class="tooltip-header">
-                                    <div class="tooltip-title">${asset.name}</div>
-                                    <div class="tooltip-type">${asset.type}</div>
-                                </div>
-                                <div class="tooltip-content">
-                                    <div class="tooltip-row">
-                                        <span class="tooltip-label">路径：</span>
-                                        <span class="tooltip-value" title="${asset.path}">${asset.path}</span>
+                                    <div class="tooltip-content">
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">路径：</span>
+                                            <span class="tooltip-value" title="${asset.path}">${asset.path}</span>
+                                        </div>
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">资产文件路径长度：</span>
+                                            <span class="tooltip-value">${asset.path.length}/210</span>
+                                        </div>
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">烘焙文件路径长度：</span>
+                                            <span class="tooltip-value">${(asset.path.length + 50)}/260</span>
+                                        </div>
                                     </div>
-                                    <div class="tooltip-row">
-                                        <span class="tooltip-label">资产文件路径长度：</span>
-                                        <span class="tooltip-value">${asset.path.length}/210</span>
-                                    </div>
-                                    <div class="tooltip-row">
-                                        <span class="tooltip-label">烘焙文件路径长度：</span>
-                                        <span class="tooltip-value">${(asset.path.length + 50)}/260</span>
-                                    </div>
-                                    <div class="tooltip-row">
-                                        <span class="tooltip-label">磁盘空间：</span>
-                                        <span class="tooltip-value">${Math.round(parseFloat(asset.size) * 1024 * 1.23)} KiB</span>
-                                    </div>
-                                    <div class="tooltip-row">
-                                        <span class="tooltip-label">Constraints：</span>
-                                        <span class="tooltip-value">18</span>
-                                    </div>
-                                    <div class="tooltip-row">
-                                        <span class="tooltip-label">Bodies：</span>
-                                        <span class="tooltip-value">19</span>
-                                    </div>
-                                </div>
-                                <div class="tooltip-footer">
-                                    <div class="tooltip-footer-item">
-                                        <span class="tooltip-label">Size</span>
-                                        <span class="tooltip-value">${asset.size}</span>
-                                    </div>
-                                    <div class="tooltip-footer-item">
-                                        <span class="tooltip-label">Modified</span>
-                                        <span class="tooltip-value">${asset.lastModified}</span>
+                                    <div class="tooltip-footer">
+                                        <div class="tooltip-footer-item">
+                                            <span class="tooltip-label">Size</span>
+                                            <span class="tooltip-value">${asset.size}</span>
+                                        </div>
+                                        <div class="tooltip-footer-item">
+                                            <span class="tooltip-label">Modified</span>
+                                            <span class="tooltip-value">${asset.lastModified}</span>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                    `;
+                        `;
+                    } else {
+                        return `
+                            <div class="asset-card ${cardType} ${isSelected ? 'selected' : ''}" data-asset-id="${asset.id}">
+                                <div class="asset-card-content">
+                                    <div class="asset-thumbnail">
+                                        <div class="asset-type-icon">
+                                            <img src="${typeIcon}" alt="Type" width="12" height="12">
+                                        </div>
+                                        <div class="asset-check-icon">
+                                            <img src="${checkIcon}" alt="Selected" width="12" height="12">
+                                        </div>
+                                        <div class="asset-thumbnail-icon">
+                                            <img src="${thumbnailIcon}" alt="${asset.type}" width="45" height="45">
+                                        </div>
+                                        <div class="asset-type-tag">
+                                            <span>${tagText}</span>
+                                        </div>
+                                    </div>
+                                    <div class="asset-info">
+                                        <div class="asset-name" title="${asset.name}">${asset.name}</div>
+                                        <div class="asset-meta">
+                                            <span class="asset-type-label">${typeLabel}</span>
+                                            <span class="asset-size">${asset.size}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="tooltip hidden right">
+                                    <div class="tooltip-header">
+                                        <div class="tooltip-title">${asset.name}</div>
+                                        <div class="tooltip-type">${asset.type}</div>
+                                    </div>
+                                    <div class="tooltip-content">
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">路径：</span>
+                                            <span class="tooltip-value" title="${asset.path}">${asset.path}</span>
+                                        </div>
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">资产文件路径长度：</span>
+                                            <span class="tooltip-value">${asset.path.length}/210</span>
+                                        </div>
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">烘焙文件路径长度：</span>
+                                            <span class="tooltip-value">${(asset.path.length + 50)}/260</span>
+                                        </div>
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">磁盘空间：</span>
+                                            <span class="tooltip-value">${Math.round(parseFloat(asset.size) * 1024 * 1.23)} KiB</span>
+                                        </div>
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">Constraints：</span>
+                                            <span class="tooltip-value">18</span>
+                                        </div>
+                                        <div class="tooltip-row">
+                                            <span class="tooltip-label">Bodies：</span>
+                                            <span class="tooltip-value">19</span>
+                                        </div>
+                                    </div>
+                                    <div class="tooltip-footer">
+                                        <div class="tooltip-footer-item">
+                                            <span class="tooltip-label">Size</span>
+                                            <span class="tooltip-value">${asset.size}</span>
+                                        </div>
+                                        <div class="tooltip-footer-item">
+                                            <span class="tooltip-label">Modified</span>
+                                            <span class="tooltip-value">${asset.lastModified}</span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                    }
                 }).join('');
             } else {
                 elements.assetGrid.innerHTML = filteredAssets.map(asset => {
