@@ -2,24 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>UE5 Content Browser</title>
+    <title>Content Browser</title>
     <style>
         :root {
-            --ue-bg-dark: #1E1E1E;
-            --ue-bg-medium: #2D2D2D;
-            --ue-bg-light: #383838;
-            --ue-bg-hover: #454545;
-            --ue-primary: #23478F;
-            --ue-primary-hover: #2D5AB8;
-            --ue-text-primary: #E0E0E0;
-            --ue-text-secondary: #B0B0B0;
-            --ue-text-muted: #808080;
-            --ue-asset-anim: #F2994A;
-            --ue-asset-model: #2D9CDB;
-            --ue-asset-audio: #9B59B6;
-            --ue-asset-effect: #EB5757;
-            --ue-asset-material: #6FCF97;
+            --bg-dark: #1E1E1E;
+            --bg-medium: #2D2D2D;
+            --bg-light: #383838;
+            --bg-hover: #454545;
+            --primary: #23478F;
+            --primary-hover: #2D5AB8;
+            --text-primary: #E0E0E0;
+            --text-secondary: #B0B0B0;
+            --text-muted: #808080;
+            --asset-anim: #F2994A;
+            --asset-model: #2D9CDB;
+            --asset-audio: #9B59B6;
+            --asset-effect: #EB5757;
+            --asset-material: #6FCF97;
         }
 
         * {
@@ -30,165 +29,347 @@
 
         body {
             font-family: 'Inter', system-ui, sans-serif;
-            background-color: var(--ue-bg-dark);
-            color: var(--ue-text-primary);
-            height: 100vh;
+            background-color: var(--bg-dark);
+            color: var(--text-primary);
+            height: 523px;
+            width: 1280px;
             overflow: hidden;
         }
 
         .app {
             display: flex;
-            height: 100vh;
-            width: 100vw;
+            height: 523px;
+            width: 1280px;
             overflow: hidden;
         }
 
         /* Sidebar */
         .sidebar {
-            width: 256px;
-            background-color: var(--ue-bg-dark);
-            border-right: 1px solid var(--ue-bg-medium);
+            width: 280px;
+            background-color: var(--bg-dark);
+            border-right: 1px solid var(--bg-medium);
             display: flex;
             flex-direction: column;
             height: 100%;
-            font-size: 14px;
+            font-size: 13px;
         }
 
-        .sidebar-header {
-            padding: 8px;
-            border-bottom: 1px solid var(--ue-bg-medium);
-        }
-
-        .sidebar-nav {
+        /* Navigation Control Bar */
+        .sidebar-nav-bar {
             display: flex;
             align-items: center;
+            padding: 6px 8px;
+            background-color: var(--bg-medium);
+            border-bottom: 1px solid #404040;
             gap: 4px;
         }
 
-        .sidebar-nav button {
-            padding: 4px;
-            color: var(--ue-text-secondary);
+        .nav-buttons {
+            display: flex;
+            gap: 0;
+        }
+
+        .nav-button {
+            width: 21px;
+            height: 21px;
+            color: var(--text-secondary);
             background: transparent;
             border: none;
-            border-radius: 4px;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .nav-button:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+        }
+
+        .nav-button:disabled {
+            opacity: 0.4;
+            cursor: not-allowed;
+        }
+
+        .nav-button:disabled:hover {
+            background-color: transparent;
+        }
+
+        .nav-button svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        .nav-button img {
+            display: block;
+        }
+
+        .sidebar-filter-search {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            background-color: var(--bg-dark);
+            border: 1px solid #404040;
+            border-radius: 3px;
+            padding: 4px 8px;
+            min-width: 0;
+            gap: 6px;
+        }
+
+        .sidebar-filter-search input {
+            flex: 1;
+            background: transparent;
+            border: none;
+            color: var(--text-primary);
+            font-size: 12px;
+            outline: none;
+            min-width: 0;
+        }
+
+        .sidebar-filter-search input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .sidebar-filter-search svg:first-child {
+            color: var(--text-muted);
+            flex-shrink: 0;
+            width: 12px;
+            height: 12px;
+        }
+
+        .sidebar-filter-search input:focus ~ svg:first-child {
+            color: var(--primary);
+        }
+
+        .sidebar-filter-search:focus-within {
+            border-color: var(--primary);
+        }
+
+        .clear-filter-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.15s;
+        }
+
+        .clear-filter-btn:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+        }
+
+        .clear-filter-btn svg {
+            width: 12px;
+            height: 12px;
+        }
+
+        /* Sources Panel Header */
+        .sidebar-sources-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 8px 12px;
+            background-color: var(--bg-medium);
+            border-bottom: 1px solid #404040;
+        }
+
+        .sidebar-sources-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .sidebar-sources-actions {
+            display: flex;
+            gap: 4px;
+        }
+
+        .sidebar-sources-actions button {
+            padding: 4px;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-radius: 3px;
             cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
         }
 
-        .sidebar-nav button:hover {
-            color: var(--ue-text-primary);
-            background-color: var(--ue-bg-light);
+        .sidebar-sources-actions button:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-light);
         }
 
-        .sidebar-search {
-            flex: 1;
-            margin-left: 8px;
-            position: relative;
+        /* Source Items */
+        .sidebar-sources-list {
+            list-style: none;
+            padding: 4px 0;
+            border-bottom: 1px solid var(--bg-medium);
         }
 
-        .sidebar-search input {
-            width: 100%;
-            background-color: var(--ue-bg-medium);
-            border: 1px solid transparent;
-            border-radius: 4px;
-            font-size: 12px;
-            padding: 4px 8px 4px 24px;
-            color: var(--ue-text-primary);
-            outline: none;
-        }
-
-        .sidebar-search input:focus {
-            border-color: var(--ue-primary);
-        }
-
-        .sidebar-search svg {
-            position: absolute;
-            left: 6px;
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--ue-text-muted);
-            width: 12px;
-            height: 12px;
-        }
-
-        .favorites-section {
-            padding: 8px;
-            border-bottom: 1px solid var(--ue-bg-medium);
-        }
-
-        .favorites-header {
+        .source-item {
             display: flex;
             align-items: center;
-            color: var(--ue-primary);
-            font-weight: bold;
-            margin-bottom: 8px;
-            padding: 0 8px;
+            padding: 6px 12px;
+            cursor: pointer;
+            transition: all 0.15s;
+            color: var(--text-secondary);
         }
 
-        .favorites-header svg {
+        .source-item:hover {
+            background-color: var(--bg-light);
+            color: var(--text-primary);
+        }
+
+        .source-item.active {
+            background-color: var(--primary);
+            color: white;
+        }
+
+        .source-item svg {
             margin-right: 8px;
-            fill: currentColor;
+            flex-shrink: 0;
         }
 
-        .favorites-list {
+        .source-item .source-name {
+            flex: 1;
+            font-size: 13px;
+        }
+
+        .source-item .source-count {
+            font-size: 11px;
+            color: var(--text-muted);
+            margin-left: 8px;
+        }
+
+        .source-item.active .source-count {
+            color: rgba(255, 255, 255, 0.7);
+        }
+
+        /* Collections Section */
+        .collections-section {
+            padding: 8px 0;
+            border-bottom: 1px solid var(--bg-medium);
+        }
+
+        .collections-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 12px 6px;
+        }
+
+        .collections-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .collections-actions {
+            display: flex;
+            gap: 2px;
+        }
+
+        .collections-actions button {
+            padding: 3px;
+            color: var(--text-muted);
+            background: transparent;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .collections-actions button:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-light);
+        }
+
+        .collections-list {
             list-style: none;
         }
 
-        .favorites-list li {
+        .collection-item {
             display: flex;
             align-items: center;
-            padding: 6px 8px;
-            border-radius: 4px;
+            padding: 5px 12px 5px 24px;
             cursor: pointer;
-            color: var(--ue-text-secondary);
-            transition: all 0.2s;
+            transition: all 0.15s;
+            color: var(--text-secondary);
+            font-size: 12px;
         }
 
-        .favorites-list li:hover {
-            background-color: var(--ue-bg-light);
-            color: var(--ue-text-primary);
+        .collection-item:hover {
+            background-color: var(--bg-light);
+            color: var(--text-primary);
         }
 
-        .favorites-list li svg {
+        .collection-item svg {
             margin-right: 8px;
-            color: var(--ue-text-muted);
+            flex-shrink: 0;
+            color: var(--text-muted);
         }
 
-        .favorites-list li:hover svg {
-            color: var(--ue-primary);
+        .collection-item:hover svg {
+            color: var(--primary);
         }
 
-        .assets-section {
+        /* Folder Tree Section */
+        .folder-tree-section {
             flex: 1;
             overflow-y: auto;
             padding: 8px 0;
         }
 
-        .assets-header {
+        .folder-tree-header {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 0 16px 8px;
-            color: var(--ue-text-muted);
-            font-size: 12px;
-            font-weight: bold;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
+            justify-content: space-between;
+            padding: 0 12px 6px;
         }
 
-        .assets-header button {
+        .folder-tree-title {
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .folder-tree-actions {
+            display: flex;
+            gap: 2px;
+        }
+
+        .folder-tree-actions button {
+            padding: 3px;
+            color: var(--text-muted);
             background: transparent;
             border: none;
-            color: var(--ue-text-muted);
+            border-radius: 3px;
             cursor: pointer;
-            padding: 2px;
-            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .assets-header button:hover {
-            color: var(--ue-text-primary);
+        .folder-tree-actions button:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-light);
         }
 
         .folder-tree {
@@ -202,18 +383,19 @@
         .folder-header {
             display: flex;
             align-items: center;
-            padding: 4px 8px;
+            padding: 4px 12px;
             cursor: pointer;
-            transition: all 0.2s;
-            border-radius: 4px;
+            transition: all 0.15s;
+            color: var(--text-secondary);
         }
 
         .folder-header:hover {
-            background-color: var(--ue-bg-light);
+            background-color: var(--bg-light);
+            color: var(--text-primary);
         }
 
         .folder-header.selected {
-            background-color: var(--ue-primary);
+            background-color: var(--primary);
             color: white;
         }
 
@@ -222,6 +404,9 @@
             margin-right: 4px;
             cursor: pointer;
             border-radius: 2px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .folder-toggle:hover {
@@ -229,49 +414,110 @@
         }
 
         .folder-icon {
-            margin-right: 8px;
+            margin-right: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
         .folder-name {
-            font-size: 14px;
+            font-size: 12px;
+            flex: 1;
         }
 
         .folder-children {
             overflow: hidden;
             max-height: 0;
-            transition: max-height 0.3s ease-out;
+            transition: max-height 0.25s ease-out;
         }
 
         .folder-children.open {
             max-height: 1000px;
         }
 
+        /* Sidebar Footer Toolbar */
         .sidebar-footer {
-            padding: 8px;
-            border-top: 1px solid var(--ue-bg-medium);
+            padding: 6px 12px;
+            border-top: 1px solid var(--bg-medium);
+            background-color: var(--bg-medium);
         }
 
-        .sidebar-footer button {
-            width: 100%;
+        .sidebar-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .sidebar-toolbar-left {
+            display: flex;
+            gap: 2px;
+        }
+
+        .sidebar-toolbar-right {
+            display: flex;
+            gap: 2px;
+        }
+
+        .toolbar-button {
+            padding: 5px;
+            color: var(--text-secondary);
+            background: transparent;
+            border: none;
+            border-radius: 3px;
+            cursor: pointer;
             display: flex;
             align-items: center;
             justify-content: center;
-            padding: 6px;
-            background: transparent;
-            border: none;
-            color: var(--ue-text-secondary);
-            border-radius: 4px;
-            cursor: pointer;
-            transition: all 0.2s;
+            transition: all 0.15s;
         }
 
-        .sidebar-footer button:hover {
-            background-color: var(--ue-bg-light);
-            color: var(--ue-text-primary);
+        .toolbar-button:hover {
+            color: var(--text-primary);
+            background-color: var(--bg-light);
         }
 
-        .sidebar-footer button svg {
-            margin-right: 8px;
+        .toolbar-button svg {
+            width: 14px;
+            height: 14px;
+        }
+
+        /* Search Box in Sidebar */
+        .sidebar-search-box {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--bg-medium);
+        }
+
+        .sidebar-search-input-wrapper {
+            position: relative;
+        }
+
+        .sidebar-search-input-wrapper input {
+            width: 100%;
+            background-color: var(--bg-medium);
+            border: 1px solid #404040;
+            border-radius: 3px;
+            font-size: 12px;
+            padding: 5px 8px 5px 26px;
+            color: var(--text-primary);
+            outline: none;
+        }
+
+        .sidebar-search-input-wrapper input:focus {
+            border-color: var(--primary);
+        }
+
+        .sidebar-search-input-wrapper input::placeholder {
+            color: var(--text-muted);
+        }
+
+        .sidebar-search-input-wrapper svg {
+            position: absolute;
+            left: 7px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-muted);
+            width: 12px;
+            height: 12px;
         }
 
         /* Main Content */
@@ -281,19 +527,18 @@
             flex-direction: column;
             height: 100%;
             background-color: #242424;
-            border-left: 1px solid var(--ue-bg-medium);
+            border-left: 1px solid var(--bg-medium);
             overflow: hidden;
         }
 
         /* Top Bar */
         .top-bar {
-            height: 48px;
-            background-color: var(--ue-bg-dark);
-            border-bottom: 1px solid var(--ue-bg-medium);
+            height: 43px;
+            background-color: var(--bg-dark);
+            border-bottom: 1px solid var(--bg-medium);
             display: flex;
             align-items: center;
             padding: 0 16px;
-            gap: 16px;
             user-select: none;
             justify-content: space-between;
         }
@@ -305,33 +550,63 @@
         }
 
         .top-bar-button {
+            width: 64px;
+            height: 26px;
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 6px 12px;
-            background-color: var(--ue-bg-medium);
-            color: var(--ue-text-primary);
+            padding: 0 12px;
+            background-color: var(--bg-medium);
+            color: var(--text-primary);
             border: none;
             border-radius: 4px;
             cursor: pointer;
             font-size: 14px;
             transition: all 0.2s;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
 
         .top-bar-button:hover {
-            background-color: var(--ue-primary);
+            background-color: var(--primary);
             color: white;
-            transform: translateY(-1px);
+        }
+
+        .top-bar-button img {
+            display: block;
         }
 
         .top-bar-right {
             display: flex;
             align-items: center;
-            gap: 16px;
-            flex: 1;
-            justify-content: flex-end;
-            max-width: 60%;
+            gap: 8px;
+        }
+
+        /* Sort Section */
+        .sort-section {
+            margin-right: 8px;
+        }
+
+        .sort-button {
+            width: 83px;
+            height: 26px;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 0 12px;
+            background-color: var(--bg-medium);
+            color: var(--text-primary);
+            border: 1px solid var(--bg-light);
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+
+        .sort-button:hover {
+            background-color: var(--bg-light);
+        }
+
+        .sort-button img {
+            display: block;
         }
 
         .filter-section {
@@ -350,19 +625,19 @@
         }
 
         .filter-button:not(.active) {
-            background-color: var(--ue-bg-medium);
-            color: var(--ue-text-secondary);
+            background-color: var(--bg-medium);
+            color: var(--text-secondary);
             border: 1px solid transparent;
         }
 
         .filter-button:not(.active):hover {
-            background-color: var(--ue-bg-light);
+            background-color: var(--bg-light);
         }
 
         .filter-button.active {
-            background-color: var(--ue-bg-light);
-            color: var(--ue-primary);
-            border: 1px solid var(--ue-primary);
+            background-color: var(--bg-light);
+            color: var(--primary);
+            border: 1px solid var(--primary);
         }
 
         .filter-panel {
@@ -370,8 +645,8 @@
             top: 100%;
             right: 0;
             margin-top: 4px;
-            background-color: var(--ue-bg-dark);
-            border: 1px solid var(--ue-bg-medium);
+            background-color: var(--bg-dark);
+            border: 1px solid var(--bg-medium);
             border-radius: 4px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
             z-index: 1000;
@@ -389,25 +664,25 @@
             align-items: center;
             margin-bottom: 8px;
             padding-bottom: 8px;
-            border-bottom: 1px solid var(--ue-bg-medium);
+            border-bottom: 1px solid var(--bg-medium);
         }
 
         .filter-panel-title {
             font-weight: bold;
-            color: var(--ue-text-primary);
+            color: var(--text-primary);
         }
 
         .filter-panel-close {
             background: transparent;
             border: none;
-            color: var(--ue-text-muted);
+            color: var(--text-muted);
             cursor: pointer;
             padding: 2px;
             border-radius: 2px;
         }
 
         .filter-panel-close:hover {
-            color: var(--ue-text-primary);
+            color: var(--text-primary);
         }
 
         .filter-panel-body {
@@ -417,7 +692,7 @@
         .filter-section-title {
             font-size: 12px;
             font-weight: bold;
-            color: var(--ue-text-muted);
+            color: var(--text-muted);
             margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.05em;
@@ -439,11 +714,11 @@
         }
 
         .filter-option:hover {
-            background-color: var(--ue-bg-light);
+            background-color: var(--bg-light);
         }
 
         .filter-option input[type="checkbox"] {
-            accent-color: var(--ue-primary);
+            accent-color: var(--primary);
         }
 
         .filter-option label {
@@ -467,11 +742,11 @@
         }
 
         .sort-option:hover {
-            background-color: var(--ue-bg-light);
+            background-color: var(--bg-light);
         }
 
         .sort-option input[type="radio"] {
-            accent-color: var(--ue-primary);
+            accent-color: var(--primary);
         }
 
         .sort-option label {
@@ -484,12 +759,12 @@
             justify-content: flex-end;
             gap: 8px;
             padding-top: 8px;
-            border-top: 1px solid var(--ue-bg-medium);
+            border-top: 1px solid var(--bg-medium);
         }
 
         .filter-panel-button {
             padding: 4px 8px;
-            border: 1px solid var(--ue-primary);
+            border: 1px solid var(--primary);
             border-radius: 4px;
             font-size: 12px;
             cursor: pointer;
@@ -498,42 +773,42 @@
 
         .filter-panel-button.reset {
             background-color: transparent;
-            color: var(--ue-primary);
+            color: var(--primary);
         }
 
         .filter-panel-button.reset:hover {
-            background-color: var(--ue-primary);
+            background-color: var(--primary);
             color: white;
         }
 
         .global-search {
-            flex: 1;
-            max-width: 300px;
+            width: 212px;
+            height: 26px;
             position: relative;
         }
 
         .global-search input {
             width: 100%;
-            background-color: var(--ue-bg-medium);
-            border: 1px solid transparent;
+            height: 100%;
+            background-color: var(--bg-medium);
+            border: 1px solid var(--bg-light);
             border-radius: 4px;
             font-size: 14px;
-            padding: 6px 16px 6px 28px;
-            color: var(--ue-text-primary);
+            padding: 0 16px 0 32px;
+            color: var(--text-primary);
             outline: none;
             transition: all 0.2s;
         }
 
         .global-search input:focus {
-            border-color: var(--ue-primary);
+            border-color: var(--primary);
         }
 
-        .global-search svg.search-icon {
+        .global-search img {
             position: absolute;
             left: 8px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--ue-text-muted);
         }
 
         .global-search svg.clear-icon {
@@ -541,19 +816,19 @@
             right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--ue-text-muted);
+            color: var(--text-muted);
             cursor: pointer;
         }
 
         .global-search svg.clear-icon:hover {
-            color: var(--ue-text-primary);
+            color: var(--text-primary);
         }
 
         /* View Toggle Bar */
         .view-toggle-bar {
             height: 32px;
-            background-color: var(--ue-bg-dark);
-            border-bottom: 1px solid var(--ue-bg-medium);
+            background-color: var(--bg-dark);
+            border-bottom: 1px solid var(--bg-medium);
             display: flex;
             align-items: center;
             padding: 0 16px;
@@ -563,7 +838,7 @@
         .view-toggle-info {
             margin-right: auto;
             font-size: 12px;
-            color: var(--ue-text-muted);
+            color: var(--text-muted);
         }
 
         .view-toggle-buttons {
@@ -581,16 +856,16 @@
         }
 
         .view-toggle-button:not(.active) {
-            color: var(--ue-text-secondary);
+            color: var(--text-secondary);
         }
 
         .view-toggle-button:not(.active):hover {
-            background-color: var(--ue-bg-light);
+            background-color: var(--bg-light);
         }
 
         .view-toggle-button.active {
-            color: var(--ue-primary);
-            background-color: var(--ue-bg-medium);
+            color: var(--primary);
+            background-color: var(--bg-medium);
         }
 
         /* Asset Grid */
@@ -641,14 +916,14 @@
         .asset-thumbnail {
             width: 100%;
             height: 120px;
-            background-color: var(--ue-bg-medium);
+            background-color: var(--bg-medium);
             border-radius: 4px;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border: 1px solid var(--ue-bg-light);
+            border: 1px solid var(--bg-light);
         }
 
         .asset-type-tag {
@@ -696,7 +971,7 @@
 
         .asset-name {
             font-size: 12px;
-            color: var(--ue-text-primary);
+            color: var(--text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -707,7 +982,7 @@
             display: flex;
             justify-content: space-between;
             font-size: 10px;
-            color: var(--ue-text-secondary);
+            color: var(--text-secondary);
         }
 
         .asset-type-format {
@@ -732,18 +1007,18 @@
         }
 
         .asset-list-item:hover {
-            background-color: var(--ue-bg-light);
+            background-color: var(--bg-light);
         }
 
         .asset-list-item.selected {
-            background-color: var(--ue-primary);
+            background-color: var(--primary);
             color: white;
         }
 
         .asset-list-icon {
             width: 24px;
             height: 24px;
-            background-color: var(--ue-bg-medium);
+            background-color: var(--bg-medium);
             border-radius: 4px;
             display: flex;
             align-items: center;
@@ -779,7 +1054,7 @@
             align-items: center;
             justify-content: center;
             height: 100%;
-            color: var(--ue-text-muted);
+            color: var(--text-muted);
         }
 
         .empty-state p {
@@ -792,7 +1067,7 @@
             align-items: center;
             gap: 8px;
             padding: 8px 16px;
-            background-color: var(--ue-primary);
+            background-color: var(--primary);
             color: white;
             border: none;
             border-radius: 4px;
@@ -801,7 +1076,7 @@
         }
 
         .empty-state button:hover {
-            background-color: var(--ue-primary-hover);
+            background-color: var(--primary-hover);
         }
 
         /* Tooltip */
@@ -813,7 +1088,7 @@
             margin-left: 8px;
             width: 256px;
             background-color: rgba(18, 18, 18, 0.95);
-            border: 1px solid var(--ue-primary);
+            border: 1px solid var(--primary);
             border-radius: 4px;
             padding: 12px;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
@@ -835,7 +1110,7 @@
 
         .tooltip-content {
             font-size: 12px;
-            color: var(--ue-text-secondary);
+            color: var(--text-secondary);
             display: grid;
             grid-template-columns: 80px 1fr;
             gap: 4px;
@@ -858,47 +1133,163 @@
     <div class="app">
         <!-- Sidebar -->
         <div class="sidebar">
-            <!-- Sidebar Header -->
-            <div class="sidebar-header">
-                <div class="sidebar-nav">
-                    <button id="nav-back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
-                    <button id="nav-forward"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
-                    <button id="nav-refresh"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v5h-5"/></svg></button>
-                    <div class="sidebar-search">
-                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
-                        <input type="text" id="sidebar-search" placeholder="搜索内容" />
-                    </div>
+            <!-- Navigation Control Bar -->
+            <div class="sidebar-nav-bar">
+                <div class="nav-buttons">
+                    <button class="nav-button" id="nav-back" title="Back">
+                        <img src="image/navigation bar/Button - Back.png" alt="Back" width="16" height="16">
+                    </button>
+                    <button class="nav-button" id="nav-forward" title="Forward">
+                        <img src="image/navigation bar/Button - Forward_margin.png" alt="Forward" width="16" height="16">
+                    </button>
+                    <button class="nav-button" id="nav-refresh" title="Refresh">
+                        <img src="image/navigation bar/Button - Refresh_margin.png" alt="Refresh" width="14" height="14">
+                    </button>
+                </div>
+                <div class="sidebar-filter-search">
+                    <img src="image/navigation bar/筛选icon.png" alt="Filter" width="10.5" height="14">
+                    <input type="text" id="sidebar-filter-input" placeholder="筛选文件夹..." />
+                    <button class="clear-filter-btn hidden" id="clear-filter-btn" title="Clear">
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                    </button>
                 </div>
             </div>
 
             <!-- Favorites Section -->
-            <div class="favorites-section">
-                <div class="favorites-header">
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
-                    <span>收藏夹</span>
+            <div class="collections-section">
+                <div class="collections-header">
+                    <span class="collections-title">收藏夹</span>
+                    <div class="collections-actions">
+                        <button id="add-collection" title="Add Favorite">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                        </button>
+                    </div>
                 </div>
-                <ul class="favorites-list" id="favorites-list">
-                    <!-- Favorites will be populated by JS -->
+                <ul class="collections-list" id="collections-list">
+                    <li class="collection-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                        <span>UI_Elements</span>
+                    </li>
+                    <li class="collection-item">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5 21h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/></svg>
+                        <span>MainCharacter</span>
+                    </li>
                 </ul>
             </div>
 
             <!-- Assets Section -->
-            <div class="assets-section">
-                <div class="assets-header">
-                    <span>Assets</span>
-                    <button id="add-root-folder"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
+            <div class="folder-tree-section">
+                <div class="folder-tree-header">
+                    <span class="folder-tree-title">ASSETS</span>
+                    <div class="folder-tree-actions">
+                        <button id="collapse-all" title="Collapse All">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+                        </button>
+                        <button id="expand-all" title="Expand All">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                        </button>
+                    </div>
                 </div>
                 <ul class="folder-tree" id="folder-tree">
-                    <!-- Folders will be populated by JS -->
+                    <li class="folder-item">
+                        <div class="folder-header" data-folder="content">
+                            <div class="folder-toggle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>
+                            </div>
+                            <div class="folder-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                            </div>
+                            <span class="folder-name">Content</span>
+                        </div>
+                        <ul class="folder-children open">
+                            <li class="folder-item">
+                                <div class="folder-header" data-folder="player">
+                                    <div class="folder-toggle">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+                                    </div>
+                                    <div class="folder-icon">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="7" r="4"/><path d="M5 21h14a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2H5a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2z"/></svg>
+                                    </div>
+                                    <span class="folder-name">Player</span>
+                                </div>
+                            </li>
+                            <li class="folder-item">
+                                <div class="folder-header" data-folder="enemies">
+                                    <div class="folder-toggle">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+                                    </div>
+                                    <div class="folder-icon">
+                                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 2a10 10 0 1 0 0 20 10 10 0 0 0 0-20z"/><path d="M12 8v4l3 3"/></svg>
+                                    </div>
+                                    <span class="folder-name">Enemies</span>
+                                </div>
+                            </li>
+                        </ul>
+                    </li>
+                    <li class="folder-item">
+                        <div class="folder-header" data-folder="audio">
+                            <div class="folder-toggle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+                            </div>
+                            <div class="folder-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"/><path d="M15.54 8.46a5 5 0 0 1 0 7.07"/><path d="M19.07 4.93a10 10 0 0 1 0 14.14"/></svg>
+                            </div>
+                            <span class="folder-name">Audio</span>
+                        </div>
+                    </li>
+                    <li class="folder-item">
+                        <div class="folder-header" data-folder="materials">
+                            <div class="folder-toggle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+                            </div>
+                            <div class="folder-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+                            </div>
+                            <span class="folder-name">Materials</span>
+                        </div>
+                    </li>
+                    <li class="folder-item">
+                        <div class="folder-header" data-folder="models">
+                            <div class="folder-toggle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+                            </div>
+                            <div class="folder-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 12h-4l-3 9L9 3l-3 9H2"/></svg>
+                            </div>
+                            <span class="folder-name">Models</span>
+                        </div>
+                    </li>
+                    <li class="folder-item">
+                        <div class="folder-header" data-folder="blueprints">
+                            <div class="folder-toggle">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m18 15-6-6-6 6"/></svg>
+                            </div>
+                            <div class="folder-icon">
+                                <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                            </div>
+                            <span class="folder-name">Blueprints</span>
+                        </div>
+                    </li>
                 </ul>
             </div>
 
-            <!-- Sidebar Footer -->
+            <!-- Sidebar Footer Toolbar -->
             <div class="sidebar-footer">
-                <button id="add-root-button">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
-                    <span>添加根目录</span>
-                </button>
+                <div class="sidebar-toolbar">
+                    <div class="sidebar-toolbar-left">
+                        <button class="toolbar-button" id="add-folder-btn" title="Add Folder">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
+                        </button>
+                        <button class="toolbar-button" id="import-folder-btn" title="Import Folder">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        </button>
+                    </div>
+                    <div class="sidebar-toolbar-right">
+                        <button class="toolbar-button" id="view-options-btn" title="View Options">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
+                        </button>
+                    </div>
+                </div>
             </div>
         </div>
 
@@ -908,58 +1299,27 @@
             <div class="top-bar">
                 <div class="top-bar-left">
                     <button class="top-bar-button" id="save-button">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        <img src="image/TopBar/save.png" alt="Save" width="14" height="14">
                         <span>保存</span>
                     </button>
                     <button class="top-bar-button" id="import-button">
-                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <img src="image/TopBar/import.png" alt="Import" width="14" height="14">
                         <span>导入</span>
                     </button>
                 </div>
                 <div class="top-bar-right">
-                    <!-- Filter Section -->
-                    <div class="filter-section">
-                        <button class="filter-button" id="filter-button">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
-                            <span id="filter-button-text">筛选</span>
+                    <!-- Sort Section -->
+                    <div class="sort-section">
+                        <button class="sort-button" id="sort-button">
+                            <img src="image/TopBar/sort.png" alt="Sort" width="14" height="14">
+                            <span>排序</span>
+                            <img src="image/TopBar/pull-down.png" alt="Dropdown" width="14" height="14">
                         </button>
-                        <div class="filter-panel hidden" id="filter-panel">
-                            <div class="filter-panel-header">
-                                <span class="filter-panel-title">筛选</span>
-                                <button class="filter-panel-close" id="filter-panel-close">
-                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
-                                </button>
-                            </div>
-                            <div class="filter-panel-body">
-                                <div class="filter-section-title">资产类型</div>
-                                <div class="filter-options" id="filter-options">
-                                    <!-- Filter options will be populated by JS -->
-                                </div>
-                                <div class="filter-section-title">排序方式</div>
-                                <div class="sort-options" id="sort-options">
-                                    <div class="sort-option">
-                                        <input type="radio" id="sort-date" name="sort" value="date" checked />
-                                        <label for="sort-date">日期</label>
-                                    </div>
-                                    <div class="sort-option">
-                                        <input type="radio" id="sort-size" name="sort" value="size" />
-                                        <label for="sort-size">大小</label>
-                                    </div>
-                                    <div class="sort-option">
-                                        <input type="radio" id="sort-name" name="sort" value="name" />
-                                        <label for="sort-name">名称</label>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="filter-panel-footer">
-                                <button class="filter-panel-button reset" id="reset-filter-button">重置</button>
-                            </div>
-                        </div>
                     </div>
 
                     <!-- Global Search -->
                     <div class="global-search">
-                        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <img src="image/TopBar/search.png" alt="Search" width="16" height="12">
                         <input type="text" id="global-search" placeholder="搜索内容" />
                         <svg class="clear-icon hidden" id="clear-search" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </div>
@@ -1077,13 +1437,17 @@
             sortBy: 'date',
             isFilterOpen: false,
             viewMode: 'grid',
-            openFolders: new Set(['root', 'chars', 'env'])
+            openFolders: new Set(['root', 'chars', 'env']),
+            navigationHistory: ['root'],
+            navigationIndex: 0,
+            sidebarFilterQuery: ''
         };
 
         // DOM Elements
         const elements = {
             folderTree: document.getElementById('folder-tree'),
-            favoritesList: document.getElementById('favorites-list'),
+            collectionsList: document.getElementById('collections-list'),
+            sourcesList: document.getElementById('sources-list'),
             assetGrid: document.getElementById('asset-grid'),
             filterButton: document.getElementById('filter-button'),
             filterButtonText: document.getElementById('filter-button-text'),
@@ -1093,13 +1457,23 @@
             resetFilterButton: document.getElementById('reset-filter-button'),
             globalSearch: document.getElementById('global-search'),
             clearSearch: document.getElementById('clear-search'),
-            sidebarSearch: document.getElementById('sidebar-search'),
+            sidebarFilterInput: document.getElementById('sidebar-filter-input'),
+            clearFilterBtn: document.getElementById('clear-filter-btn'),
             listViewButton: document.getElementById('list-view-button'),
             gridViewButton: document.getElementById('grid-view-button'),
             assetCount: document.getElementById('asset-count'),
             saveButton: document.getElementById('save-button'),
             importButton: document.getElementById('import-button'),
-            addRootButton: document.getElementById('add-root-button')
+            addFolderBtn: document.getElementById('add-folder-btn'),
+            importFolderBtn: document.getElementById('import-folder-btn'),
+            viewOptionsBtn: document.getElementById('view-options-btn'),
+            collapseAllBtn: document.getElementById('collapse-all'),
+            expandAllBtn: document.getElementById('expand-all'),
+            addCollectionBtn: document.getElementById('add-collection'),
+            sourcesSettingsBtn: document.getElementById('sources-settings'),
+            navBack: document.getElementById('nav-back'),
+            navForward: document.getElementById('nav-forward'),
+            navRefresh: document.getElementById('nav-refresh')
         };
 
         // Helper functions
@@ -1182,17 +1556,45 @@
             return result;
         }
 
-        function renderFavorites() {
-            elements.favoritesList.innerHTML = mockData.favorites.map(fav => `
-                <li>
-                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
-                    <span>${fav.name}</span>
-                </li>
-            `).join('');
+        function filterFolders(folders, query) {
+            if (!query) return folders;
+            
+            const lowerQuery = query.toLowerCase();
+            return folders.filter(folder => {
+                const matchesName = folder.name.toLowerCase().includes(lowerQuery);
+                const hasMatchingChildren = folder.children && folder.children.length > 0 && 
+                    filterFolders(folder.children, query).length > 0;
+                return matchesName || hasMatchingChildren;
+            }).map(folder => ({
+                ...folder,
+                children: folder.children ? filterFolders(folder.children, query) : []
+            }));
         }
 
+        function updateNavigationButtons() {
+            elements.navBack.disabled = state.navigationIndex <= 0;
+            elements.navForward.disabled = state.navigationIndex >= state.navigationHistory.length - 1;
+        }
+
+        function navigateToFolder(folderId) {
+            if (state.currentFolderId !== folderId) {
+                state.currentFolderId = folderId;
+                state.navigationHistory = state.navigationHistory.slice(0, state.navigationIndex + 1);
+                state.navigationHistory.push(folderId);
+                state.navigationIndex = state.navigationHistory.length - 1;
+                
+                updateNavigationButtons();
+                renderAssets();
+                updateFolderSelection();
+            }
+        }
+
+
+
         function renderFolderTree(folders = mockData.folders, level = 0) {
-            return folders.map(folder => {
+            const filteredFolders = filterFolders(folders, state.sidebarFilterQuery);
+            
+            return filteredFolders.map(folder => {
                 const isOpen = state.openFolders.has(folder.id);
                 const isSelected = folder.id === state.currentFolderId;
                 const hasChildren = folder.children && folder.children.length > 0;
@@ -1221,6 +1623,15 @@
             }).join('');
         }
 
+        function updateFolderSelection() {
+            document.querySelectorAll('.folder-header').forEach(header => {
+                header.classList.remove('selected');
+                if (header.dataset.folderId === state.currentFolderId) {
+                    header.classList.add('selected');
+                }
+            });
+        }
+
         function renderFilterOptions() {
             const assetTypes = ['Anim', 'Model', 'Audio', 'Effect', 'Material'];
             elements.filterOptions.innerHTML = assetTypes.map(type => `
@@ -1238,7 +1649,7 @@
             if (filteredAssets.length === 0) {
                 elements.assetGrid.innerHTML = `
                     <div class="empty-state">
-                        <p>暂无资产，点击导入添加</p>
+                        <p>暂无资产，点击导入添�?/p>
                         <button id="empty-import-button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             导入资产
@@ -1404,7 +1815,7 @@
 
         function updateFilterButtonText() {
             if (state.filterTypes.length === 0) {
-                elements.filterButtonText.textContent = '筛选';
+                elements.filterButtonText.textContent = '筛�?;
                 elements.filterButton.classList.remove('active');
             } else {
                 if (state.filterTypes.length <= 2) {
@@ -1435,8 +1846,7 @@
                 const folderHeader = e.target.closest('.folder-header');
                 if (folderHeader) {
                     const folderId = folderHeader.dataset.folderId;
-                    state.currentFolderId = folderId;
-                    elements.folderTree.innerHTML = renderFolderTree();
+                    navigateToFolder(folderId);
                     renderAssets();
                 }
             });
@@ -1504,10 +1914,45 @@
                 renderAssets();
             });
             
-            // Sidebar search
-            elements.sidebarSearch.addEventListener('input', (e) => {
-                state.searchPathQuery = e.target.value;
-                // Implement search filtering logic here if needed
+            // Navigation buttons
+            elements.navBack.addEventListener('click', () => {
+                if (state.navigationIndex > 0) {
+                    state.navigationIndex--;
+                    state.currentFolderId = state.navigationHistory[state.navigationIndex];
+                    updateNavigationButtons();
+                    renderAssets();
+                    updateFolderSelection();
+                }
+            });
+            
+            elements.navForward.addEventListener('click', () => {
+                if (state.navigationIndex < state.navigationHistory.length - 1) {
+                    state.navigationIndex++;
+                    state.currentFolderId = state.navigationHistory[state.navigationIndex];
+                    updateNavigationButtons();
+                    renderAssets();
+                    updateFolderSelection();
+                }
+            });
+            
+            elements.navRefresh.addEventListener('click', () => {
+                console.log('Refresh clicked');
+                // Implement refresh logic here
+            });
+            
+            // Sidebar filter search
+            elements.sidebarFilterInput.addEventListener('input', (e) => {
+                state.sidebarFilterQuery = e.target.value;
+                elements.clearFilterBtn.classList.toggle('hidden', !state.sidebarFilterQuery);
+                elements.folderTree.innerHTML = renderFolderTree();
+            });
+            
+            // Clear sidebar filter
+            elements.clearFilterBtn.addEventListener('click', () => {
+                state.sidebarFilterQuery = '';
+                elements.sidebarFilterInput.value = '';
+                elements.clearFilterBtn.classList.add('hidden');
+                elements.folderTree.innerHTML = renderFolderTree();
             });
             
             // View mode toggle
@@ -1539,9 +1984,54 @@
                 console.log('Import clicked');
             });
             
-            // Add root button
-            elements.addRootButton.addEventListener('click', () => {
-                console.log('Add root folder clicked');
+            // Sidebar toolbar buttons
+            elements.addFolderBtn.addEventListener('click', () => {
+                console.log('Add folder clicked');
+            });
+            
+            elements.importFolderBtn.addEventListener('click', () => {
+                console.log('Import folder clicked');
+            });
+            
+            elements.viewOptionsBtn.addEventListener('click', () => {
+                console.log('View options clicked');
+            });
+            
+            elements.collapseAllBtn.addEventListener('click', () => {
+                state.openFolders.clear();
+                state.openFolders.add('root');
+                elements.folderTree.innerHTML = renderFolderTree();
+            });
+            
+            elements.expandAllBtn.addEventListener('click', () => {
+                function addAllFolders(folders) {
+                    folders.forEach(folder => {
+                        state.openFolders.add(folder.id);
+                        if (folder.children) {
+                            addAllFolders(folder.children);
+                        }
+                    });
+                }
+                addAllFolders(mockData.folders);
+                elements.folderTree.innerHTML = renderFolderTree();
+            });
+            
+            elements.addCollectionBtn.addEventListener('click', () => {
+                console.log('Add collection clicked');
+            });
+            
+            elements.sourcesSettingsBtn.addEventListener('click', () => {
+                console.log('Sources settings clicked');
+            });
+            
+            // Source items click
+            elements.sourcesList.addEventListener('click', (e) => {
+                const sourceItem = e.target.closest('.source-item');
+                if (sourceItem) {
+                    document.querySelectorAll('.source-item').forEach(item => item.classList.remove('active'));
+                    sourceItem.classList.add('active');
+                    console.log('Source selected:', sourceItem.dataset.source);
+                }
             });
             
             // Click outside to close filter panel
@@ -1555,10 +2045,10 @@
 
         // Initialize app
         function init() {
-            renderFavorites();
             elements.folderTree.innerHTML = renderFolderTree();
             renderFilterOptions();
             renderAssets();
+            updateNavigationButtons();
             setupEventListeners();
         }
 
