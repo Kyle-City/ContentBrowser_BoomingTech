@@ -113,8 +113,8 @@
             flex: 1;
             display: flex;
             align-items: center;
-            background-color: var(--bg-dark);
-            border: 1px solid #404040;
+            background-color: #151515;
+            border: 1px solid #3F3F46;
             border-radius: 3px;
             padding: 4px 8px;
             min-width: 0;
@@ -125,7 +125,7 @@
             flex: 1;
             background: transparent;
             border: none;
-            color: var(--text-secondary);
+            color: #888888;
             font-family: 'Dream Han Sans CN', system-ui, sans-serif;
             font-size: 12px;
             font-weight: 17;
@@ -134,7 +134,7 @@
         }
 
         .sidebar-filter-search input::placeholder {
-            color: var(--text-secondary);
+            color: #888888;
             font-family: 'Dream Han Sans CN', system-ui, sans-serif;
             font-size: 12px;
             font-weight: 17;
@@ -471,52 +471,6 @@
 
         .folder-children .folder-children .folder-item {
             padding-left: 40px;
-        }
-
-        /* Sidebar Footer Toolbar */
-        .sidebar-footer {
-            padding: 6px 12px;
-            border-top: 1px solid var(--bg-medium);
-            background-color: var(--bg-medium);
-        }
-
-        .sidebar-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-        }
-
-        .sidebar-toolbar-left {
-            display: flex;
-            gap: 2px;
-        }
-
-        .sidebar-toolbar-right {
-            display: flex;
-            gap: 2px;
-        }
-
-        .toolbar-button {
-            padding: 5px;
-            color: var(--text-secondary);
-            background: transparent;
-            border: none;
-            border-radius: 3px;
-            cursor: pointer;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            transition: all 0.15s;
-        }
-
-        .toolbar-button:hover {
-            color: var(--text-primary);
-            background-color: var(--bg-light);
-        }
-
-        .toolbar-button svg {
-            width: 14px;
-            height: 14px;
         }
 
         /* Search Box in Sidebar */
@@ -862,12 +816,13 @@
             flex: 1;
             overflow-y: auto;
             padding: 16px;
+            position: relative;
         }
 
         .asset-grid.grid-view {
             display: grid;
             grid-template-columns: repeat(6, 144px);
-            gap: 24px;
+            gap: 24px !important;
         }
 
         .asset-grid.list-view {
@@ -876,12 +831,40 @@
             gap: 4px;
         }
 
+        /* Asset Card - Type 1: Effect (Red) */
         .asset-card {
             position: relative;
             cursor: pointer;
             transition: all 0.2s;
             width: 144px;
             height: 188px;
+            border-radius: 6px;
+            padding: 6px 6px 2px 6px;
+            background: rgba(37, 37, 38, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        .asset-card.type-effect:hover {
+            border-color: rgba(235, 87, 87, 0.5);
+        }
+
+        .asset-card.type-effect.selected {
+            background: #251B1B;
+            border: 1px solid #EB5757;
+            box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        .asset-card.type-effect .asset-type-icon {
+            background-color: rgba(235, 87, 87, 0.6);
+        }
+
+        .asset-card.type-effect.selected .asset-type-icon {
+            background-color: #EB5757;
+        }
+
+        .asset-card.type-effect .asset-check-icon {
+            background-color: #EB5757;
         }
 
         .asset-card-content {
@@ -889,94 +872,255 @@
             height: 100%;
             display: flex;
             flex-direction: column;
-            padding: 8px;
-            border-radius: 4px;
-            border: 1px solid transparent;
-            transition: all 0.2s;
-        }
-
-        .asset-card:hover .asset-card-content {
-            border-color: var(--asset-color, #808080);
-        }
-
-        .asset-card.selected .asset-card-content {
-            border-color: var(--asset-color, #808080);
-            background-color: rgba(var(--asset-color-rgb, 128, 128, 128), 0.1);
+            align-items: center;
         }
 
         .asset-thumbnail {
             width: 128px;
             height: 128px;
-            background-color: var(--bg-medium);
-            border-radius: 4px;
+            background-color: #1A1A1A;
+            border-radius: 2px;
             position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
             overflow: hidden;
-            border: 1px solid var(--bg-light);
-            margin-bottom: 8px;
         }
 
-        .asset-selection-indicator {
+        .asset-thumbnail-icon {
+            width: 45px;
+            height: 45px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .asset-thumbnail-icon img {
+            width: 45px;
+            height: 45px;
+            object-fit: contain;
+        }
+
+        /* Top-left small icon */
+        .asset-type-icon {
             position: absolute;
             top: 4px;
             left: 4px;
             width: 24px;
             height: 24px;
             border-radius: 4px;
-            background-color: var(--bg-dark);
-            color: var(--text-primary);
+            background-color: #EB5757;
             display: flex;
             align-items: center;
             justify-content: center;
-            cursor: pointer;
-            transition: transform 0.2s;
-            border: 1px solid var(--bg-light);
+            box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
         }
 
-        .asset-selection-indicator:hover {
-            transform: scale(1.1);
+        .asset-type-icon img {
+            width: 12px;
+            height: 12px;
+            object-fit: contain;
         }
 
-        .asset-placeholder {
-            color: var(--text-secondary);
-            opacity: 0.5;
+        /* Top-right check icon (selected state only) */
+        .asset-check-icon {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 9999px;
+            background-color: #EB5757;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .asset-card.selected .asset-check-icon {
+            opacity: 1;
+        }
+
+        .asset-check-icon img {
+            width: 12px;
+            height: 12px;
+            object-fit: contain;
+        }
+
+        /* Asset Card - Type 2: Anim (Orange) */
+        .asset-card.type-anim {
+            background: rgba(37, 37, 38, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        .asset-card.type-anim:hover {
+            border-color: rgba(242, 153, 74, 0.5);
+        }
+
+        .asset-card.type-anim.selected {
+            background: #2A1F1A;
+            border: 1px solid #F2994A;
+            box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        .asset-card.type-anim .asset-type-icon {
+            background-color: rgba(242, 153, 74, 0.6);
+        }
+
+        .asset-card.type-anim.selected .asset-type-icon {
+            background-color: #F2994A;
+        }
+
+        .asset-card.type-anim .asset-check-icon {
+            background-color: #F2994A;
+        }
+
+        /* Asset Card - Type 3: Audio (Purple) */
+        .asset-card.type-audio:hover {
+            border-color: rgba(155, 89, 182, 0.5);
+        }
+
+        .asset-card.type-audio.selected {
+            background: #251B25;
+            border: 1px solid #9B59B6;
+            box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        .asset-card.type-audio .asset-type-icon {
+            background-color: rgba(155, 89, 182, 0.6);
+        }
+
+        .asset-card.type-audio.selected .asset-type-icon {
+            background-color: #9B59B6;
+        }
+
+        .asset-card.type-audio .asset-check-icon {
+            background-color: #9B59B6;
+        }
+
+        /* Asset Card - Type 4: Material (Green) */
+        .asset-card.type-material:hover {
+            border-color: rgba(111, 207, 151, 0.5);
+        }
+
+        .asset-card.type-material.selected {
+            background: #1B251F;
+            border: 1px solid #6FCF97;
+            box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        .asset-card.type-material .asset-type-icon {
+            background-color: rgba(111, 207, 151, 0.6);
+        }
+
+        .asset-card.type-material.selected .asset-type-icon {
+            background-color: #6FCF97;
+        }
+
+        .asset-card.type-material .asset-check-icon {
+            background-color: #6FCF97;
+        }
+
+        /* Asset Card - Type 5: Model (Blue) */
+        .asset-card.type-model:hover {
+            border-color: rgba(45, 156, 219, 0.5);
+        }
+
+        .asset-card.type-model.selected {
+            background: #1B2225;
+            border: 1px solid #2D9CDB;
+            box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.6);
+        }
+
+        .asset-card.type-model .asset-type-icon {
+            background-color: rgba(45, 156, 219, 0.6);
+        }
+
+        .asset-card.type-model.selected .asset-type-icon {
+            background-color: #2D9CDB;
+        }
+
+        .asset-card.type-model .asset-check-icon {
+            background-color: #2D9CDB;
+        }
+
+        /* Bottom-right tag with blur effect */
+        .asset-type-tag {
+            position: absolute;
+            bottom: 4px;
+            right: 4px;
+            padding: 2px 2px;
+            width: 32px;
+            height: 16px;
+            background: rgba(0, 0, 0, 0.4);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-radius: 4px;
+            backdrop-filter: blur(12px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .asset-type-tag span {
+            font-family: 'Dream Han Sans CN', system-ui, sans-serif;
+            font-weight: 613;
+            font-size: 10px;
+            line-height: 1.5em;
+            color: #FFFFFF;
+            text-align: center;
         }
 
         .asset-info {
-            text-align: center;
-            width: 100%;
-            margin-top: auto;
+            width: 128px;
+            height: 40px;
+            margin-top: 12px;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            padding: 0 0 4px 0;
         }
 
         .asset-name {
-            font-size: 14px;
+            font-family: 'Inter', system-ui, sans-serif;
             font-weight: 500;
-            color: var(--text-primary);
+            font-size: 13px;
+            line-height: 1.5em;
+            color: #FFFFFF;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            margin-bottom: 12px;
+            text-align: center;
+            height: 18px;
         }
 
         .asset-meta {
             display: flex;
             justify-content: space-between;
-            font-size: 12px;
-            color: var(--text-secondary);
+            align-items: center;
+            height: 15px;
         }
 
-        .asset-type-format {
-            position: absolute;
-            bottom: 8px;
-            right: 8px;
-            padding: 2px 6px;
-            background-color: var(--bg-dark);
-            border-radius: 4px;
+        .asset-type-label {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 400;
             font-size: 10px;
-            color: var(--text-primary);
-            border: 1px solid var(--bg-light);
+            line-height: 1.5em;
+            color: #888888;
+        }
+
+        .asset-card.selected .asset-type-label {
+            color: #4EA8DE;
+        }
+
+        .asset-size {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 400;
+            font-size: 10px;
+            line-height: 1.5em;
+            color: #888888;
         }
 
         .asset-list-item {
@@ -1035,7 +1179,11 @@
             flex-direction: column;
             align-items: center;
             justify-content: center;
-            height: 100%;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 100%;
             color: var(--text-muted);
         }
 
@@ -1065,49 +1213,125 @@
         .tooltip {
             position: absolute;
             z-index: 50;
-            left: 100%;
             top: 0;
-            margin-left: 8px;
-            width: 256px;
-            background-color: rgba(18, 18, 18, 0.95);
-            border: 1px solid var(--primary);
-            border-radius: 4px;
-            padding: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            width: 280px;
+            background: rgba(17, 17, 17, 0.7);
+            border: 1px solid #3F3F46;
+            border-radius: 8px;
+            padding: 16px;
+            box-shadow: 0px 25px 50px -12px rgba(0, 0, 0, 0.25);
+            backdrop-filter: blur(24px);
             pointer-events: none;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
         }
 
         .tooltip.hidden {
             display: none;
         }
 
+        .tooltip.right {
+            left: 100%;
+            margin-left: 20px;
+        }
+
+        .tooltip.left {
+            right: 100%;
+            margin-right: 20px;
+        }
+
+        .tooltip-header {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid rgba(63, 63, 70, 0.5);
+        }
+
         .tooltip-title {
-            font-weight: bold;
-            color: white;
-            margin-bottom: 4px;
+            font-family: 'Dream Han Sans CN', system-ui, sans-serif;
+            font-weight: 613;
+            font-size: 14px;
+            line-height: 1.42857em;
+            letter-spacing: -0.025em;
+            color: #FFFFFF;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
         }
 
+        .tooltip-type {
+            font-family: 'Dream Han Sans CN', system-ui, sans-serif;
+            font-weight: 613;
+            font-size: 10px;
+            line-height: 1.5em;
+            letter-spacing: 0.1em;
+            text-transform: uppercase;
+            color: #F2994A;
+        }
+
         .tooltip-content {
-            font-size: 12px;
-            color: var(--text-secondary);
-            display: grid;
-            grid-template-columns: 80px 1fr;
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .tooltip-row {
+            display: flex;
             gap: 4px;
         }
 
         .tooltip-label {
-            text-align: left;
+            font-family: 'Dream Han Sans CN', system-ui, sans-serif;
+            font-weight: 613;
+            font-size: 10px;
+            line-height: 1.35em;
+            text-transform: uppercase;
+            color: #888888;
         }
 
         .tooltip-value {
-            text-align: left;
-            color: white;
+            font-family: 'Dream Han Sans CN', system-ui, sans-serif;
+            font-weight: 613;
+            font-size: 10px;
+            line-height: 1.65em;
+            color: #EEEEEE;
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
+        }
+
+        .tooltip-footer {
+            display: flex;
+            gap: 16px;
+        }
+
+        .tooltip-footer-item {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .asset-card.type-effect .tooltip-type {
+            color: #EB5757;
+        }
+
+        .asset-card.type-anim .tooltip-type {
+            color: #F2994A;
+        }
+
+        .asset-card.type-audio .tooltip-type {
+            color: #9B59B6;
+        }
+
+        .asset-card.type-material .tooltip-type {
+            color: #6FCF97;
+        }
+
+        .asset-card.type-model .tooltip-type {
+            color: #2D9CDB;
         }
     </style>
 </head>
@@ -1140,9 +1364,9 @@
             <!-- Favorites Section -->
             <div class="collections-section">
                 <div class="collections-header">
-                    <div style="display: flex; align-items: center;">
+                    <div style="display: flex; align-items: center; cursor: pointer;" id="collections-toggle">
                         <div class="folder-toggle" style="margin-right: 0;">
-                            <img src="image/navigation bar/小三角.png" alt="Toggle" width="16" height="3">
+                            <img id="collections-toggle-icon" src="image/navigation bar/小三角.png" alt="Toggle" width="16" height="3">
                         </div>
                         <img src="image/navigation bar/Star.png" alt="Star" width="24" height="14">
                         <span class="collections-title" style="margin-left: 0;">收藏夹</span>
@@ -1170,120 +1394,10 @@
                         </button>
                     </div>
                 </div>
-                <ul class="folder-tree" id="folder-tree">
-                    <li class="folder-item">
-                        <div class="folder-header selected" data-folder="content">
-                            <div class="folder-toggle">
-                                <img src="image/navigation bar/小三角.png" alt="Toggle" width="16" height="3">
-                            </div>
-                            <div class="folder-icon">
-                                <img src="image/navigation bar/Margin_open.png" alt="Folder" width="24" height="11">
-                            </div>
-                            <span class="folder-name">Content</span>
-                        </div>
-                        <ul class="folder-children open">
-                            <li class="folder-item">
-                                <div class="folder-header selected child" data-folder="animations">
-                                    <div class="folder-toggle">
-                                        <img src="image/navigation bar/小三角.png" alt="Toggle" width="16" height="3">
-                                    </div>
-                                    <div class="folder-icon">
-                                        <img src="image/navigation bar/Margin_open.png" alt="Folder" width="24" height="11">
-                                    </div>
-                                    <span class="folder-name">Animations</span>
-                                </div>
-                                <ul class="folder-children open">
-                                    <li class="folder-item">
-                                        <div class="folder-header" data-folder="player">
-                                            <div class="folder-toggle">
-                                                <div style="width: 16px;"></div>
-                                            </div>
-                                            <div class="folder-icon">
-                                                <img src="image/navigation bar/Margin.png" alt="Folder" width="24" height="11">
-                                            </div>
-                                            <span class="folder-name">Player</span>
-                                        </div>
-                                    </li>
-                                    <li class="folder-item">
-                                        <div class="folder-header" data-folder="enemies">
-                                            <div class="folder-toggle">
-                                                <div style="width: 16px;"></div>
-                                            </div>
-                                            <div class="folder-icon">
-                                                <img src="image/navigation bar/Margin.png" alt="Folder" width="24" height="11">
-                                            </div>
-                                            <span class="folder-name">Enemies</span>
-                                        </div>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li class="folder-item">
-                                <div class="folder-header" data-folder="audio">
-                                    <div class="folder-toggle">
-                                        <div style="width: 16px;"></div>
-                                    </div>
-                                    <div class="folder-icon">
-                                        <img src="image/navigation bar/Margin.png" alt="Folder" width="24" height="11">
-                                    </div>
-                                    <span class="folder-name">Audio</span>
-                                </div>
-                            </li>
-                            <li class="folder-item">
-                                <div class="folder-header" data-folder="materials">
-                                    <div class="folder-toggle">
-                                        <div style="width: 16px;"></div>
-                                    </div>
-                                    <div class="folder-icon">
-                                        <img src="image/navigation bar/Margin.png" alt="Folder" width="24" height="11">
-                                    </div>
-                                    <span class="folder-name">Materials</span>
-                                </div>
-                            </li>
-                            <li class="folder-item">
-                                <div class="folder-header" data-folder="models">
-                                    <div class="folder-toggle">
-                                        <div style="width: 16px;"></div>
-                                    </div>
-                                    <div class="folder-icon">
-                                        <img src="image/navigation bar/Margin.png" alt="Folder" width="24" height="11">
-                                    </div>
-                                    <span class="folder-name">Models</span>
-                                </div>
-                            </li>
-                            <li class="folder-item">
-                                <div class="folder-header" data-folder="blueprints">
-                                    <div class="folder-toggle">
-                                        <div style="width: 16px;"></div>
-                                    </div>
-                                    <div class="folder-icon">
-                                        <img src="image/navigation bar/Margin.png" alt="Folder" width="24" height="11">
-                                    </div>
-                                    <span class="folder-name">Blueprints</span>
-                                </div>
-                            </li>
-                        </ul>
-                    </li>
-                </ul>
+                <ul class="folder-tree" id="folder-tree"></ul>
             </div>
 
-            <!-- Sidebar Footer Toolbar -->
-            <div class="sidebar-footer">
-                <div class="sidebar-toolbar">
-                    <div class="sidebar-toolbar-left">
-                        <button class="toolbar-button" id="add-folder-btn" title="Add Folder">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/><line x1="12" y1="11" x2="12" y2="17"/><line x1="9" y1="14" x2="15" y2="14"/></svg>
-                        </button>
-                        <button class="toolbar-button" id="import-folder-btn" title="Import Folder">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
-                        </button>
-                    </div>
-                    <div class="sidebar-toolbar-right">
-                        <button class="toolbar-button" id="view-options-btn" title="View Options">
-                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="1"/><circle cx="19" cy="12" r="1"/><circle cx="5" cy="12" r="1"/></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>
+
         </div>
 
         <!-- Main Content -->
@@ -1337,39 +1451,20 @@
                     parentId: null,
                     children: [
                         {
-                            id: 'chars',
-                            name: 'Characters',
+                            id: 'animations',
+                            name: 'Animations',
                             parentId: 'root',
                             children: [
                                 {
-                                    id: 'warrior',
-                                    name: 'Warrior',
-                                    parentId: 'chars',
+                                    id: 'player',
+                                    name: 'Player',
+                                    parentId: 'animations',
                                     children: []
                                 },
                                 {
-                                    id: 'mage',
-                                    name: 'Mage',
-                                    parentId: 'chars',
-                                    children: []
-                                }
-                            ]
-                        },
-                        {
-                            id: 'env',
-                            name: 'Environment',
-                            parentId: 'root',
-                            children: [
-                                {
-                                    id: 'trees',
-                                    name: 'Trees',
-                                    parentId: 'env',
-                                    children: []
-                                },
-                                {
-                                    id: 'rocks',
-                                    name: 'Rocks',
-                                    parentId: 'env',
+                                    id: 'enemies',
+                                    name: 'Enemies',
+                                    parentId: 'animations',
                                     children: []
                                 }
                             ]
@@ -1381,8 +1476,20 @@
                             children: []
                         },
                         {
-                            id: 'vfx',
-                            name: 'VFX',
+                            id: 'materials',
+                            name: 'Materials',
+                            parentId: 'root',
+                            children: []
+                        },
+                        {
+                            id: 'models',
+                            name: 'Models',
+                            parentId: 'root',
+                            children: []
+                        },
+                        {
+                            id: 'blueprints',
+                            name: 'Blueprints',
                             parentId: 'root',
                             children: []
                         }
@@ -1390,13 +1497,13 @@
                 }
             ],
             assets: [
-                { id: 'a1', name: 'Warrior_Idle', type: 'Anim', path: '/Content/Characters/Warrior', size: '2.4 MB', format: 'FBX', lastModified: '2023-10-25', parentId: 'root' },
-                { id: 'a2', name: 'Warrior_Run', type: 'Anim', path: '/Content/Characters/Warrior', size: '3.1 MB', format: 'FBX', lastModified: '2023-10-26', parentId: 'root' },
-                { id: 'a3', name: 'Warrior_Attack', type: 'Anim', path: '/Content/Characters/Warrior', size: '4.5 MB', format: 'FBX', lastModified: '2023-10-27', parentId: 'root' },
-                { id: 'm1', name: 'SK_Warrior', type: 'Model', path: '/Content/Characters/Warrior', size: '45.2 MB', format: 'FBX', lastModified: '2023-10-20', parentId: 'root' },
-                { id: 's1', name: 'BGM_MainTheme', type: 'Audio', path: '/Content/Audio', size: '12.4 MB', format: 'WAV', lastModified: '2023-09-15', parentId: 'root' },
                 { id: 'e1', name: 'P_Fireball', type: 'Effect', path: '/Content/VFX', size: '1.2 MB', format: 'UASSET', lastModified: '2023-11-01', parentId: 'root' },
-                { id: 'm2', name: 'SK_Mage', type: 'Model', path: '/Content/Characters/Mage', size: '38.7 MB', format: 'FBX', lastModified: '2023-10-22', parentId: 'root' }
+                { id: 'e2', name: 'P_Explosion', type: 'Effect', path: '/Content/VFX', size: '3.5 MB', format: 'UASSET', lastModified: '2023-11-02', parentId: 'root' },
+                { id: 'a2', name: 'Warrior_Run', type: 'Anim', path: '/Content/Characters/Warrior', size: '6.2 MB', format: 'FBX', lastModified: '2023-10-26', parentId: 'animations' },
+                { id: 's2', name: 'SFX_SwordHit', type: 'Audio', path: '/Content/Audio/SFX', size: '3.2 MB', format: 'WAV', lastModified: '2023-10-28', parentId: 'audio' },
+                { id: 'mat1', name: 'M_Grass', type: 'Material', path: '/Content/Materials', size: '8.2 MB', format: 'Mat', lastModified: '2023-10-29', parentId: 'materials' },
+                { id: 'mod1', name: 'SM_Crate', type: 'Model', path: '/Content/Models', size: '71.6 MB', format: 'OBJ', lastModified: '2023-10-30', parentId: 'models' },
+                { id: 'm2', name: 'SK_Mage', type: 'Model', path: '/Content/Characters/Mage', size: '38.7 MB', format: 'FBX', lastModified: '2023-10-22', parentId: 'models' }
             ],
             favorites: [
                 { id: 'fav1', name: 'Characters', path: '/Content/Characters' },
@@ -1414,16 +1521,19 @@
             sortBy: 'date',
             isFilterOpen: false,
             viewMode: 'grid',
-            openFolders: new Set(['root', 'chars', 'env']),
+            openFolders: new Set(['root', 'animations']),
             navigationHistory: ['root'],
             navigationIndex: 0,
-            sidebarFilterQuery: ''
+            sidebarFilterQuery: '',
+            isCollectionsOpen: true
         };
 
         // DOM Elements
         const elements = {
             folderTree: document.getElementById('folder-tree'),
             collectionsList: document.getElementById('collections-list'),
+            collectionsToggle: document.getElementById('collections-toggle'),
+            collectionsToggleIcon: document.getElementById('collections-toggle-icon'),
             sourcesList: document.getElementById('sources-list'),
             assetGrid: document.getElementById('asset-grid'),
             filterButton: document.getElementById('filter-button'),
@@ -1439,9 +1549,6 @@
 
             saveButton: document.getElementById('save-button'),
             importButton: document.getElementById('import-button'),
-            addFolderBtn: document.getElementById('add-folder-btn'),
-            importFolderBtn: document.getElementById('import-folder-btn'),
-            viewOptionsBtn: document.getElementById('view-options-btn'),
             collapseAllBtn: document.getElementById('collapse-all'),
             expandAllBtn: document.getElementById('expand-all'),
             addCollectionBtn: document.getElementById('add-collection'),
@@ -1503,6 +1610,22 @@
             return ids;
         }
 
+        function checkFolderHasChildren(folderId, allFolders) {
+            function find(nodes) {
+                for (const node of nodes) {
+                    if (node.id === folderId) {
+                        return node.children && node.children.length > 0;
+                    }
+                    if (node.children && node.children.length > 0) {
+                        const found = find(node.children);
+                        if (found !== undefined) return found;
+                    }
+                }
+                return false;
+            }
+            return find(allFolders);
+        }
+
         function filterAssets() {
             const validFolderIds = getAllDescendantIds(state.currentFolderId, mockData.folders);
             
@@ -1518,15 +1641,7 @@
                 return true;
             });
             
-            result.sort((a, b) => {
-                if (state.sortBy === 'date') {
-                    return new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime();
-                }
-                if (state.sortBy === 'size') {
-                    return parseFloat(b.size) - parseFloat(a.size);
-                }
-                return a.name.localeCompare(b.name);
-            });
+
             
             return result;
         }
@@ -1583,7 +1698,7 @@
                         <div class="folder-header ${isSelected ? 'selected' : ''} ${isSelected && level > 0 ? 'child' : ''}" data-folder-id="${folder.id}">
                             ${hasChildren ? `
                                 <div class="folder-toggle" data-folder-id="${folder.id}">
-                                    <img src="image/navigation bar/小三角.png" alt="Toggle" width="16" height="3">
+                                    <img src="${isOpen ? 'image/navigation bar/小三角.png' : 'image/navigation bar/小三角_2.png'}" alt="Toggle" ${isOpen ? 'width="16" height="3"' : 'width="16" height="7"'}>
                                 </div>
                             ` : '<div class="folder-toggle"><div style="width: 16px;"></div></div>'}
                             <img class="folder-icon" src="${isSelected ? 'image/navigation bar/Margin_open.png' : 'image/navigation bar/Margin.png'}" alt="Folder" width="24" height="11">
@@ -1674,7 +1789,7 @@
             if (filteredAssets.length === 0) {
                 elements.assetGrid.innerHTML = `
                     <div class="empty-state">
-                        <p>暂无资产，点击导入添�?/p>
+                        <p>暂无资产，点击导入添加</p>
                         <button id="empty-import-button">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
                             导入资产
@@ -1691,44 +1806,119 @@
             if (state.viewMode === 'grid') {
                 elements.assetGrid.innerHTML = filteredAssets.map(asset => {
                     const isSelected = state.selectedAssetIds.includes(asset.id);
-                    const assetColor = getAssetColor(asset.type);
-                    const assetColorRgb = getAssetColorRgb(asset.type);
+                    
+                    // Determine card type and icons based on asset type
+                    let cardType, typeIcon, thumbnailIcon, checkIcon, tagText, typeLabel;
+                    
+                    switch(asset.type) {
+                        case 'Anim':
+                            cardType = 'type-anim';
+                            typeIcon = 'image/content/2_2.png';
+                            thumbnailIcon = 'image/content/2_1.png';
+                            checkIcon = 'image/content/2_3.png';
+                            tagText = 'fx';
+                            typeLabel = 'Anim';
+                            break;
+                        case 'Audio':
+                            cardType = 'type-audio';
+                            typeIcon = 'image/content/3_2.png';
+                            thumbnailIcon = 'image/content/3_1.png';
+                            checkIcon = 'image/content/3_3.png';
+                            tagText = 'sfx';
+                            typeLabel = 'Audio';
+                            break;
+                        case 'Material':
+                            cardType = 'type-material';
+                            typeIcon = 'image/content/4_2.png';
+                            thumbnailIcon = 'image/content/4_1.png';
+                            checkIcon = 'image/content/4_3.png';
+                            tagText = 'mat';
+                            typeLabel = 'Material';
+                            break;
+                        case 'Model':
+                            cardType = 'type-model';
+                            typeIcon = 'image/content/5_2.png';
+                            thumbnailIcon = 'image/content/5_1.png';
+                            checkIcon = 'image/content/5_3.png';
+                            tagText = 'obj';
+                            typeLabel = 'Model';
+                            break;
+                        case 'Effect':
+                        default:
+                            cardType = 'type-effect';
+                            typeIcon = 'image/content/1_2.png';
+                            thumbnailIcon = 'image/content/1_1.png';
+                            checkIcon = 'image/content/1_3.png';
+                            tagText = 'vfx';
+                            typeLabel = 'Effect';
+                            break;
+                    }
                     
                     return `
-                        <div class="asset-card ${isSelected ? 'selected' : ''}" data-asset-id="${asset.id}" style="--asset-color: ${assetColor}; --asset-color-rgb: ${assetColorRgb};">
+                        <div class="asset-card ${cardType} ${isSelected ? 'selected' : ''}" data-asset-id="${asset.id}">
                             <div class="asset-card-content">
                                 <div class="asset-thumbnail">
-                                    ${isSelected ? `
-                                        <div class="asset-selection-indicator" data-asset-id="${asset.id}">
-                                            <img src="image/content/2_1.png" alt="Selected" width="12" height="12">
-                                        </div>
-                                    ` : ''}
-                                    <div class="asset-placeholder">
-                                        <img src="image/content/2_2.png" alt="${asset.type}" width="48" height="48">
+                                    <div class="asset-type-icon">
+                                        <img src="${typeIcon}" alt="Type" width="12" height="12">
                                     </div>
-                                    <div class="asset-type-format">
-                                        ${asset.format}
+                                    <div class="asset-check-icon">
+                                        <img src="${checkIcon}" alt="Selected" width="12" height="12">
+                                    </div>
+                                    <div class="asset-thumbnail-icon">
+                                        <img src="${thumbnailIcon}" alt="${asset.type}" width="45" height="45">
+                                    </div>
+                                    <div class="asset-type-tag">
+                                        <span>${tagText}</span>
                                     </div>
                                 </div>
                                 <div class="asset-info">
                                     <div class="asset-name" title="${asset.name}">${asset.name}</div>
                                     <div class="asset-meta">
-                                        <span>${asset.type}</span>
-                                        <span>${asset.size}</span>
+                                        <span class="asset-type-label">${typeLabel}</span>
+                                        <span class="asset-size">${asset.size}</span>
                                     </div>
                                 </div>
                             </div>
-                            <div class="tooltip hidden">
-                                <div class="tooltip-title">${asset.name}</div>
+                            <div class="tooltip hidden right">
+                                <div class="tooltip-header">
+                                    <div class="tooltip-title">${asset.name}</div>
+                                    <div class="tooltip-type">${asset.type}</div>
+                                </div>
                                 <div class="tooltip-content">
-                                    <div class="tooltip-label">Type:</div>
-                                    <div class="tooltip-value">${asset.type}</div>
-                                    <div class="tooltip-label">Path:</div>
-                                    <div class="tooltip-value" title="${asset.path}">${asset.path}</div>
-                                    <div class="tooltip-label">Size:</div>
-                                    <div class="tooltip-value">${asset.size} (${asset.format})</div>
-                                    <div class="tooltip-label">Modified:</div>
-                                    <div class="tooltip-value">${asset.lastModified}</div>
+                                    <div class="tooltip-row">
+                                        <span class="tooltip-label">路径：</span>
+                                        <span class="tooltip-value" title="${asset.path}">${asset.path}</span>
+                                    </div>
+                                    <div class="tooltip-row">
+                                        <span class="tooltip-label">资产文件路径长度：</span>
+                                        <span class="tooltip-value">${asset.path.length}/210</span>
+                                    </div>
+                                    <div class="tooltip-row">
+                                        <span class="tooltip-label">烘焙文件路径长度：</span>
+                                        <span class="tooltip-value">${(asset.path.length + 50)}/260</span>
+                                    </div>
+                                    <div class="tooltip-row">
+                                        <span class="tooltip-label">磁盘空间：</span>
+                                        <span class="tooltip-value">${Math.round(parseFloat(asset.size) * 1024 * 1.23)} KiB</span>
+                                    </div>
+                                    <div class="tooltip-row">
+                                        <span class="tooltip-label">Constraints：</span>
+                                        <span class="tooltip-value">18</span>
+                                    </div>
+                                    <div class="tooltip-row">
+                                        <span class="tooltip-label">Bodies：</span>
+                                        <span class="tooltip-value">19</span>
+                                    </div>
+                                </div>
+                                <div class="tooltip-footer">
+                                    <div class="tooltip-footer-item">
+                                        <span class="tooltip-label">Size</span>
+                                        <span class="tooltip-value">${asset.size}</span>
+                                    </div>
+                                    <div class="tooltip-footer-item">
+                                        <span class="tooltip-label">Modified</span>
+                                        <span class="tooltip-value">${asset.lastModified}</span>
+                                    </div>
                                 </div>
                             </div>
                         </div>
@@ -1785,6 +1975,21 @@
                     tooltipTimer = setTimeout(() => {
                         const tooltip = card.querySelector('.tooltip');
                         if (tooltip) {
+                            const cardRect = card.getBoundingClientRect();
+                            const tooltipWidth = 280;
+                            const spacing = 20;
+                            const pageMaxWidth = 1280;
+                            
+                            const rightEdge = cardRect.right + spacing + tooltipWidth;
+                            
+                            if (rightEdge > pageMaxWidth) {
+                                tooltip.classList.remove('right');
+                                tooltip.classList.add('left');
+                            } else {
+                                tooltip.classList.remove('left');
+                                tooltip.classList.add('right');
+                            }
+                            
                             tooltip.classList.remove('hidden');
                         }
                     }, 200);
@@ -1813,6 +2018,15 @@
                     }
                 });
             });
+
+            if (elements.assetGrid) {
+                elements.assetGrid.addEventListener('click', (e) => {
+                    if (!e.target.closest('.asset-card')) {
+                        state.selectedAssetIds = [];
+                        renderAssets();
+                    }
+                });
+            }
         }
 
         function selectAsset(id, multi) {
@@ -1852,25 +2066,48 @@
 
         // Event listeners
         function setupEventListeners() {
+            // Collections toggle
+            if (elements.collectionsToggle) {
+                elements.collectionsToggle.addEventListener('click', () => {
+                    state.isCollectionsOpen = !state.isCollectionsOpen;
+                    if (elements.collectionsList) {
+                        elements.collectionsList.style.display = state.isCollectionsOpen ? 'block' : 'none';
+                    }
+                    if (elements.collectionsToggleIcon) {
+                        if (state.isCollectionsOpen) {
+                            elements.collectionsToggleIcon.src = 'image/navigation bar/小三角.png';
+                            elements.collectionsToggleIcon.width = 16;
+                            elements.collectionsToggleIcon.height = 3;
+                        } else {
+                            elements.collectionsToggleIcon.src = 'image/navigation bar/小三角_2.png';
+                            elements.collectionsToggleIcon.width = 16;
+                            elements.collectionsToggleIcon.height = 7;
+                        }
+                    }
+                });
+            }
+            
             // Folder tree toggle
             if (elements.folderTree) {
                 elements.folderTree.addEventListener('click', (e) => {
-                    const toggle = e.target.closest('.folder-toggle');
-                    if (toggle) {
-                        e.stopPropagation();
-                        const folderId = toggle.dataset.folderId;
-                        if (state.openFolders.has(folderId)) {
-                            state.openFolders.delete(folderId);
-                        } else {
-                            state.openFolders.add(folderId);
-                        }
-                        elements.folderTree.innerHTML = renderFolderTree();
-                    }
-                    
                     const folderHeader = e.target.closest('.folder-header');
                     if (folderHeader) {
                         const folderId = folderHeader.dataset.folderId;
+                        
+                        // Toggle folder expand/collapse if it has children
+                        const hasChildren = checkFolderHasChildren(folderId, mockData.folders);
+                        if (hasChildren) {
+                            if (state.openFolders.has(folderId)) {
+                                state.openFolders.delete(folderId);
+                            } else {
+                                state.openFolders.add(folderId);
+                            }
+                        }
+                        
+                        // Navigate to folder
                         navigateToFolder(folderId);
+                        elements.folderTree.innerHTML = renderFolderTree();
+                        updateFolderSelection();
                         renderAssets();
                     }
                 });
@@ -2028,25 +2265,6 @@
                 });
             }
             
-            // Sidebar toolbar buttons
-            if (elements.addFolderBtn) {
-                elements.addFolderBtn.addEventListener('click', () => {
-                    console.log('Add folder clicked');
-                });
-            }
-            
-            if (elements.importFolderBtn) {
-                elements.importFolderBtn.addEventListener('click', () => {
-                    console.log('Import folder clicked');
-                });
-            }
-            
-            if (elements.viewOptionsBtn) {
-                elements.viewOptionsBtn.addEventListener('click', () => {
-                    console.log('View options clicked');
-                });
-            }
-            
             if (elements.collapseAllBtn && elements.folderTree) {
                 elements.collapseAllBtn.addEventListener('click', () => {
                     state.openFolders.clear();
@@ -2109,6 +2327,7 @@
             renderFilterOptions();
             renderAssets();
             updateNavigationButtons();
+            updateFolderSelection();
             setupEventListeners();
         }
 
