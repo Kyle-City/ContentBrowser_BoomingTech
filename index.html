@@ -555,13 +555,15 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 0 12px;
+            padding: 0 8px;
             background-color: var(--bg-medium);
             color: var(--text-primary);
             border: none;
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 12px;
+            font-weight: 500;
             transition: all 0.2s;
         }
 
@@ -591,13 +593,15 @@
             display: flex;
             align-items: center;
             gap: 4px;
-            padding: 0 12px;
+            padding: 0 8px;
             background-color: var(--bg-medium);
             color: var(--text-primary);
             border: 1px solid var(--bg-light);
             border-radius: 4px;
             cursor: pointer;
-            font-size: 14px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-size: 12px;
+            font-weight: 500;
             transition: all 0.2s;
         }
 
@@ -793,8 +797,8 @@
             background-color: var(--bg-medium);
             border: 1px solid var(--bg-light);
             border-radius: 4px;
-            font-size: 14px;
-            padding: 0 16px 0 32px;
+            font-size: 15px;
+            padding: 0 32px 0 16px;
             color: var(--text-primary);
             outline: none;
             transition: all 0.2s;
@@ -806,23 +810,12 @@
 
         .global-search img {
             position: absolute;
-            left: 8px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-
-        .global-search svg.clear-icon {
-            position: absolute;
             right: 8px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-muted);
-            cursor: pointer;
         }
 
-        .global-search svg.clear-icon:hover {
-            color: var(--text-primary);
-        }
+
 
         /* View Toggle Bar */
         .view-toggle-bar {
@@ -1319,9 +1312,8 @@
 
                     <!-- Global Search -->
                     <div class="global-search">
-                        <img src="image/TopBar/search.png" alt="Search" width="16" height="12">
                         <input type="text" id="global-search" placeholder="搜索内容" />
-                        <svg class="clear-icon hidden" id="clear-search" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                        <img src="image/TopBar/search.png" alt="Search" width="16" height="12">
                     </div>
                 </div>
             </div>
