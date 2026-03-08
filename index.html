@@ -1,36 +1,25 @@
 <!DOCTYPE html>
-<html lang="zh-CN">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Content Browser</title>
+    <title>UE5 Content Browser</title>
     <style>
         :root {
-            --color-primary: rgb(59, 130, 246);
-            --color-primary-hover: rgb(37, 99, 235);
-            --text-primary: rgb(255, 255, 255);
-            --text-secondary: rgb(229, 231, 235);
-            --text-muted: rgb(156, 163, 175);
-            --bg-surface: rgb(17, 24, 39);
-            --bg-elevated: rgb(31, 41, 55);
-            --bg-hover: rgb(55, 65, 81);
-            --border-color: rgb(75, 85, 99);
-            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
-            --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            --radius-sm: 4px;
-            --radius-md: 6px;
-            --radius-lg: 8px;
-            --font-size-xs: 11px;
-            --font-size-sm: 12px;
-            --font-size-base: 14px;
-            --font-size-lg: 16px;
-            --line-height-tight: 20px;
-            --line-height-normal: 24px;
-            --space-xs: 4px;
-            --space-sm: 8px;
-            --space-md: 12px;
-            --space-lg: 16px;
-            --space-xl: 24px;
+            --ue-bg-dark: #1E1E1E;
+            --ue-bg-medium: #2D2D2D;
+            --ue-bg-light: #383838;
+            --ue-bg-hover: #454545;
+            --ue-primary: #23478F;
+            --ue-primary-hover: #2D5AB8;
+            --ue-text-primary: #E0E0E0;
+            --ue-text-secondary: #B0B0B0;
+            --ue-text-muted: #808080;
+            --ue-asset-anim: #F2994A;
+            --ue-asset-model: #2D9CDB;
+            --ue-asset-audio: #9B59B6;
+            --ue-asset-effect: #EB5757;
+            --ue-asset-material: #6FCF97;
         }
 
         * {
@@ -40,494 +29,1541 @@
         }
 
         body {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: var(--bg-surface);
-            color: var(--text-primary);
+            font-family: 'Inter', system-ui, sans-serif;
+            background-color: var(--ue-bg-dark);
+            color: var(--ue-text-primary);
             height: 100vh;
             overflow: hidden;
-            font-size: var(--font-size-base);
-            line-height: var(--line-height-tight);
         }
 
-        .content-browser {
+        .app {
+            display: flex;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden;
+        }
+
+        /* Sidebar */
+        .sidebar {
+            width: 256px;
+            background-color: var(--ue-bg-dark);
+            border-right: 1px solid var(--ue-bg-medium);
             display: flex;
             flex-direction: column;
-            height: 100vh;
+            height: 100%;
+            font-size: 14px;
         }
 
-        .header {
-            background: var(--bg-elevated);
-            border-bottom: 1px solid var(--border-color);
-            padding: var(--space-sm) var(--space-lg);
+        .sidebar-header {
+            padding: 8px;
+            border-bottom: 1px solid var(--ue-bg-medium);
+        }
+
+        .sidebar-nav {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            min-height: 40px;
+            gap: 4px;
         }
 
-        .header__left {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .header__logo {
-            width: 16.67px;
-            height: 15px;
-            background: var(--color-primary);
-            border-radius: 2px;
-        }
-
-        .header__title {
-            font-size: var(--font-size-base);
-            font-weight: 600;
-            color: var(--text-primary);
-            line-height: var(--line-height-tight);
-        }
-
-        .header__right {
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-        }
-
-        .btn {
-            background: var(--bg-hover);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: var(--space-xs) var(--space-sm);
-            color: var(--text-secondary);
-            font-size: var(--font-size-sm);
+        .sidebar-nav button {
+            padding: 4px;
+            color: var(--ue-text-secondary);
+            background: transparent;
+            border: none;
+            border-radius: 4px;
             cursor: pointer;
-            transition: all 0.2s ease;
             display: flex;
             align-items: center;
-            gap: var(--space-xs);
-        }
-
-        .btn:hover {
-            background: var(--color-primary);
-            border-color: var(--color-primary);
-            color: var(--text-primary);
-        }
-
-        .btn--icon {
-            padding: var(--space-xs);
-            width: 23px;
-            height: 23px;
             justify-content: center;
         }
 
-        .main-content {
+        .sidebar-nav button:hover {
+            color: var(--ue-text-primary);
+            background-color: var(--ue-bg-light);
+        }
+
+        .sidebar-search {
             flex: 1;
-            display: flex;
-            overflow: hidden;
+            margin-left: 8px;
+            position: relative;
         }
 
-        .sidebar {
-            width: 240px;
-            background: var(--bg-elevated);
-            border-right: 1px solid var(--border-color);
-            display: flex;
-            flex-direction: column;
+        .sidebar-search input {
+            width: 100%;
+            background-color: var(--ue-bg-medium);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-size: 12px;
+            padding: 4px 8px 4px 24px;
+            color: var(--ue-text-primary);
+            outline: none;
         }
 
-        .sidebar__header {
-            padding: var(--space-md) var(--space-lg);
-            border-bottom: 1px solid var(--border-color);
-            font-weight: 600;
-            font-size: var(--font-size-sm);
-            color: var(--text-secondary);
+        .sidebar-search input:focus {
+            border-color: var(--ue-primary);
+        }
+
+        .sidebar-search svg {
+            position: absolute;
+            left: 6px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ue-text-muted);
+            width: 12px;
+            height: 12px;
+        }
+
+        .favorites-section {
+            padding: 8px;
+            border-bottom: 1px solid var(--ue-bg-medium);
+        }
+
+        .favorites-header {
+            display: flex;
+            align-items: center;
+            color: var(--ue-primary);
+            font-weight: bold;
+            margin-bottom: 8px;
+            padding: 0 8px;
+        }
+
+        .favorites-header svg {
+            margin-right: 8px;
+            fill: currentColor;
+        }
+
+        .favorites-list {
+            list-style: none;
+        }
+
+        .favorites-list li {
+            display: flex;
+            align-items: center;
+            padding: 6px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            color: var(--ue-text-secondary);
+            transition: all 0.2s;
+        }
+
+        .favorites-list li:hover {
+            background-color: var(--ue-bg-light);
+            color: var(--ue-text-primary);
+        }
+
+        .favorites-list li svg {
+            margin-right: 8px;
+            color: var(--ue-text-muted);
+        }
+
+        .favorites-list li:hover svg {
+            color: var(--ue-primary);
+        }
+
+        .assets-section {
+            flex: 1;
+            overflow-y: auto;
+            padding: 8px 0;
+        }
+
+        .assets-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px 8px;
+            color: var(--ue-text-muted);
+            font-size: 12px;
+            font-weight: bold;
             text-transform: uppercase;
-            letter-spacing: 0.5px;
+            letter-spacing: 0.05em;
+        }
+
+        .assets-header button {
+            background: transparent;
+            border: none;
+            color: var(--ue-text-muted);
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 4px;
+        }
+
+        .assets-header button:hover {
+            color: var(--ue-text-primary);
         }
 
         .folder-tree {
-            flex: 1;
-            overflow-y: auto;
-            padding: var(--space-sm) 0;
+            list-style: none;
         }
 
         .folder-item {
-            padding: var(--space-sm) var(--space-lg);
-            cursor: pointer;
-            font-size: var(--font-size-sm);
-            transition: background 0.2s ease;
-            display: flex;
-            align-items: center;
-            gap: var(--space-sm);
-            color: var(--text-secondary);
-        }
-
-        .folder-item:hover {
-            background: var(--bg-hover);
-        }
-
-        .folder-item.active {
-            background: rgba(59, 130, 246, 0.1);
-            color: var(--color-primary);
-            border-left: 2px solid var(--color-primary);
-            padding-left: calc(var(--space-lg) - 2px);
-        }
-
-        .folder-item__icon {
-            font-size: 14px;
-            opacity: 0.8;
-        }
-
-        .folder-item__subfolders {
-            margin-left: 20px;
-            display: none;
-        }
-
-        .folder-item.expanded .folder-item__subfolders {
-            display: block;
-        }
-
-        .asset-view {
-            flex: 1;
-            display: flex;
-            flex-direction: column;
-            overflow: hidden;
-        }
-
-        .asset-view__header {
-            padding: var(--space-md) var(--space-lg);
-            border-bottom: 1px solid var(--border-color);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            background: var(--bg-surface);
-        }
-
-        .asset-path {
-            font-size: var(--font-size-sm);
-            color: var(--text-muted);
-        }
-
-        .view-controls {
-            display: flex;
-            gap: var(--space-xs);
-        }
-
-        .view-controls .btn {
-            padding: var(--space-xs) var(--space-sm);
-        }
-
-        .view-controls .btn.active {
-            background: var(--color-primary);
-            border-color: var(--color-primary);
-            color: var(--text-primary);
-        }
-
-        .asset-grid {
-            flex: 1;
-            overflow-y: auto;
-            padding: var(--space-lg);
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: var(--space-md);
-        }
-
-        .asset-item {
-            background: var(--bg-elevated);
-            border-radius: var(--radius-md);
-            padding: var(--space-sm);
-            text-align: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            border: 2px solid transparent;
             position: relative;
         }
 
-        .asset-item:hover {
-            background: var(--bg-hover);
-            border-color: var(--color-primary);
-            transform: translateY(-2px);
-            box-shadow: var(--shadow-md);
+        .folder-header {
+            display: flex;
+            align-items: center;
+            padding: 4px 8px;
+            cursor: pointer;
+            transition: all 0.2s;
+            border-radius: 4px;
         }
 
-        .asset-item.selected {
-            border-color: var(--color-primary);
-            background: rgba(59, 130, 246, 0.1);
+        .folder-header:hover {
+            background-color: var(--ue-bg-light);
         }
 
-        .asset-item__thumbnail {
+        .folder-header.selected {
+            background-color: var(--ue-primary);
+            color: white;
+        }
+
+        .folder-toggle {
+            padding: 2px;
+            margin-right: 4px;
+            cursor: pointer;
+            border-radius: 2px;
+        }
+
+        .folder-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .folder-icon {
+            margin-right: 8px;
+        }
+
+        .folder-name {
+            font-size: 14px;
+        }
+
+        .folder-children {
+            overflow: hidden;
+            max-height: 0;
+            transition: max-height 0.3s ease-out;
+        }
+
+        .folder-children.open {
+            max-height: 1000px;
+        }
+
+        .sidebar-footer {
+            padding: 8px;
+            border-top: 1px solid var(--ue-bg-medium);
+        }
+
+        .sidebar-footer button {
             width: 100%;
-            height: 80px;
-            background: var(--bg-surface);
-            border-radius: var(--radius-sm);
             display: flex;
             align-items: center;
             justify-content: center;
-            margin-bottom: var(--space-sm);
-            font-size: 32px;
-            color: var(--text-muted);
+            padding: 6px;
+            background: transparent;
+            border: none;
+            color: var(--ue-text-secondary);
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        .asset-item__name {
-            font-size: var(--font-size-xs);
-            color: var(--text-secondary);
+        .sidebar-footer button:hover {
+            background-color: var(--ue-bg-light);
+            color: var(--ue-text-primary);
+        }
+
+        .sidebar-footer button svg {
+            margin-right: 8px;
+        }
+
+        /* Main Content */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+            background-color: #242424;
+            border-left: 1px solid var(--ue-bg-medium);
+            overflow: hidden;
+        }
+
+        /* Top Bar */
+        .top-bar {
+            height: 48px;
+            background-color: var(--ue-bg-dark);
+            border-bottom: 1px solid var(--ue-bg-medium);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 16px;
+            user-select: none;
+            justify-content: space-between;
+        }
+
+        .top-bar-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .top-bar-button {
+            display: flex;
+            align-items: center;
+            gap: 4px;
+            padding: 6px 12px;
+            background-color: var(--ue-bg-medium);
+            color: var(--ue-text-primary);
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 14px;
+            transition: all 0.2s;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .top-bar-button:hover {
+            background-color: var(--ue-primary);
+            color: white;
+            transform: translateY(-1px);
+        }
+
+        .top-bar-right {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            flex: 1;
+            justify-content: flex-end;
+            max-width: 60%;
+        }
+
+        .filter-section {
+            position: relative;
+        }
+
+        .filter-button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 12px;
+            border-radius: 4px;
+            font-size: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-button:not(.active) {
+            background-color: var(--ue-bg-medium);
+            color: var(--ue-text-secondary);
+            border: 1px solid transparent;
+        }
+
+        .filter-button:not(.active):hover {
+            background-color: var(--ue-bg-light);
+        }
+
+        .filter-button.active {
+            background-color: var(--ue-bg-light);
+            color: var(--ue-primary);
+            border: 1px solid var(--ue-primary);
+        }
+
+        .filter-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 4px;
+            background-color: var(--ue-bg-dark);
+            border: 1px solid var(--ue-bg-medium);
+            border-radius: 4px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            min-width: 200px;
+            padding: 8px;
+        }
+
+        .filter-panel.hidden {
+            display: none;
+        }
+
+        .filter-panel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+            padding-bottom: 8px;
+            border-bottom: 1px solid var(--ue-bg-medium);
+        }
+
+        .filter-panel-title {
+            font-weight: bold;
+            color: var(--ue-text-primary);
+        }
+
+        .filter-panel-close {
+            background: transparent;
+            border: none;
+            color: var(--ue-text-muted);
+            cursor: pointer;
+            padding: 2px;
+            border-radius: 2px;
+        }
+
+        .filter-panel-close:hover {
+            color: var(--ue-text-primary);
+        }
+
+        .filter-panel-body {
+            margin-bottom: 8px;
+        }
+
+        .filter-section-title {
+            font-size: 12px;
+            font-weight: bold;
+            color: var(--ue-text-muted);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .filter-options {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .filter-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .filter-option:hover {
+            background-color: var(--ue-bg-light);
+        }
+
+        .filter-option input[type="checkbox"] {
+            accent-color: var(--ue-primary);
+        }
+
+        .filter-option label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .sort-options {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .sort-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .sort-option:hover {
+            background-color: var(--ue-bg-light);
+        }
+
+        .sort-option input[type="radio"] {
+            accent-color: var(--ue-primary);
+        }
+
+        .sort-option label {
+            font-size: 14px;
+            cursor: pointer;
+        }
+
+        .filter-panel-footer {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            padding-top: 8px;
+            border-top: 1px solid var(--ue-bg-medium);
+        }
+
+        .filter-panel-button {
+            padding: 4px 8px;
+            border: 1px solid var(--ue-primary);
+            border-radius: 4px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .filter-panel-button.reset {
+            background-color: transparent;
+            color: var(--ue-primary);
+        }
+
+        .filter-panel-button.reset:hover {
+            background-color: var(--ue-primary);
+            color: white;
+        }
+
+        .global-search {
+            flex: 1;
+            max-width: 300px;
+            position: relative;
+        }
+
+        .global-search input {
+            width: 100%;
+            background-color: var(--ue-bg-medium);
+            border: 1px solid transparent;
+            border-radius: 4px;
+            font-size: 14px;
+            padding: 6px 16px 6px 28px;
+            color: var(--ue-text-primary);
+            outline: none;
+            transition: all 0.2s;
+        }
+
+        .global-search input:focus {
+            border-color: var(--ue-primary);
+        }
+
+        .global-search svg.search-icon {
+            position: absolute;
+            left: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ue-text-muted);
+        }
+
+        .global-search svg.clear-icon {
+            position: absolute;
+            right: 8px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--ue-text-muted);
+            cursor: pointer;
+        }
+
+        .global-search svg.clear-icon:hover {
+            color: var(--ue-text-primary);
+        }
+
+        /* View Toggle Bar */
+        .view-toggle-bar {
+            height: 32px;
+            background-color: var(--ue-bg-dark);
+            border-bottom: 1px solid var(--ue-bg-medium);
+            display: flex;
+            align-items: center;
+            padding: 0 16px;
+            gap: 8px;
+        }
+
+        .view-toggle-info {
+            margin-right: auto;
+            font-size: 12px;
+            color: var(--ue-text-muted);
+        }
+
+        .view-toggle-buttons {
+            display: flex;
+            gap: 4px;
+        }
+
+        .view-toggle-button {
+            padding: 4px;
+            background: transparent;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .view-toggle-button:not(.active) {
+            color: var(--ue-text-secondary);
+        }
+
+        .view-toggle-button:not(.active):hover {
+            background-color: var(--ue-bg-light);
+        }
+
+        .view-toggle-button.active {
+            color: var(--ue-primary);
+            background-color: var(--ue-bg-medium);
+        }
+
+        /* Asset Grid */
+        .asset-grid {
+            flex: 1;
+            overflow-y: auto;
+            padding: 16px;
+        }
+
+        .asset-grid.grid-view {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+            gap: 16px;
+        }
+
+        .asset-grid.list-view {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .asset-card {
+            position: relative;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .asset-card-content {
+            width: 120px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding: 4px;
+            border-radius: 4px;
+            border: 1px solid transparent;
+            transition: all 0.2s;
+        }
+
+        .asset-card:hover .asset-card-content {
+            border-color: var(--asset-color, #808080);
+        }
+
+        .asset-card.selected .asset-card-content {
+            border-color: var(--asset-color, #808080);
+            background-color: rgba(var(--asset-color-rgb, 128, 128, 128), 0.1);
+        }
+
+        .asset-thumbnail {
+            width: 100%;
+            height: 120px;
+            background-color: var(--ue-bg-medium);
+            border-radius: 4px;
+            position: relative;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+            border: 1px solid var(--ue-bg-light);
+        }
+
+        .asset-type-tag {
+            position: absolute;
+            top: 0;
+            left: 0;
+            padding: 4px;
+            border-bottom-right-radius: 4px;
+            background-color: var(--asset-color, #808080);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .asset-selection-indicator {
+            position: absolute;
+            top: 4px;
+            right: 4px;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background-color: var(--asset-color, #808080);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .asset-selection-indicator:hover {
+            transform: scale(1.1);
+        }
+
+        .asset-placeholder {
+            color: white;
+            opacity: 0.2;
+        }
+
+        .asset-info {
+            text-align: center;
+            width: 100%;
+        }
+
+        .asset-name {
+            font-size: 12px;
+            color: var(--ue-text-primary);
             white-space: nowrap;
             overflow: hidden;
             text-overflow: ellipsis;
-            font-weight: 500;
+            margin-bottom: 2px;
         }
 
-        .asset-item__type {
-            font-size: 10px;
-            color: var(--text-muted);
-            margin-top: 2px;
-            text-transform: uppercase;
-        }
-
-        .status-bar {
-            background: var(--bg-elevated);
-            border-top: 1px solid var(--border-color);
-            padding: var(--space-xs) var(--space-lg);
-            font-size: var(--font-size-xs);
-            color: var(--text-muted);
+        .asset-meta {
             display: flex;
             justify-content: space-between;
-            min-height: 24px;
+            font-size: 10px;
+            color: var(--ue-text-secondary);
         }
 
-        .status-bar__left {
-            display: flex;
-            align-items: center;
-            gap: var(--space-lg);
-        }
-
-        .status-bar__right {
-            display: flex;
-            align-items: center;
-            gap: var(--space-lg);
-        }
-
-        .search-box {
-            position: relative;
-            flex: 1;
-            max-width: 300px;
-        }
-
-        .search-box__input {
-            width: 100%;
-            background: var(--bg-surface);
-            border: 1px solid var(--border-color);
-            border-radius: var(--radius-sm);
-            padding: var(--space-xs) var(--space-sm) var(--space-xs) 28px;
-            color: var(--text-secondary);
-            font-size: var(--font-size-sm);
-            transition: border-color 0.2s ease;
-        }
-
-        .search-box__input:focus {
-            outline: none;
-            border-color: var(--color-primary);
-        }
-
-        .search-box__icon {
+        .asset-type-format {
             position: absolute;
-            left: var(--space-sm);
-            top: 50%;
-            transform: translateY(-50%);
-            color: var(--text-muted);
+            bottom: 4px;
+            right: 4px;
+            padding: 2px 6px;
+            background-color: rgba(0, 0, 0, 0.5);
+            border-radius: 4px;
+            font-size: 10px;
+            color: white;
+            backdrop-filter: blur(2px);
+        }
+
+        .asset-list-item {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .asset-list-item:hover {
+            background-color: var(--ue-bg-light);
+        }
+
+        .asset-list-item.selected {
+            background-color: var(--ue-primary);
+            color: white;
+        }
+
+        .asset-list-icon {
+            width: 24px;
+            height: 24px;
+            background-color: var(--ue-bg-medium);
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 12px;
+        }
+
+        .asset-list-name {
+            flex: 1;
+            font-size: 14px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .asset-list-type {
+            width: 96px;
             font-size: 12px;
+            text-align: right;
+            opacity: 0.6;
         }
 
-        ::-webkit-scrollbar {
-            width: 6px;
-            height: 6px;
+        .asset-list-size {
+            width: 80px;
+            font-size: 12px;
+            text-align: right;
+            opacity: 0.6;
         }
 
-        ::-webkit-scrollbar-track {
-            background: var(--bg-surface);
+        .empty-state {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            height: 100%;
+            color: var(--ue-text-muted);
         }
 
-        ::-webkit-scrollbar-thumb {
-            background: var(--bg-hover);
-            border-radius: 3px;
+        .empty-state p {
+            margin-bottom: 16px;
+            font-size: 18px;
         }
 
-        ::-webkit-scrollbar-thumb:hover {
-            background: var(--border-color);
+        .empty-state button {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px 16px;
+            background-color: var(--ue-primary);
+            color: white;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            transition: all 0.2s;
         }
 
-        @media (max-width: 768px) {
-            .sidebar {
-                width: 200px;
-            }
-            
-            .asset-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-                gap: var(--space-sm);
-            }
+        .empty-state button:hover {
+            background-color: var(--ue-primary-hover);
+        }
+
+        /* Tooltip */
+        .tooltip {
+            position: absolute;
+            z-index: 50;
+            left: 100%;
+            top: 0;
+            margin-left: 8px;
+            width: 256px;
+            background-color: rgba(18, 18, 18, 0.95);
+            border: 1px solid var(--ue-primary);
+            border-radius: 4px;
+            padding: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5);
+            pointer-events: none;
+        }
+
+        .tooltip.hidden {
+            display: none;
+        }
+
+        .tooltip-title {
+            font-weight: bold;
+            color: white;
+            margin-bottom: 4px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .tooltip-content {
+            font-size: 12px;
+            color: var(--ue-text-secondary);
+            display: grid;
+            grid-template-columns: 80px 1fr;
+            gap: 4px;
+        }
+
+        .tooltip-label {
+            text-align: left;
+        }
+
+        .tooltip-value {
+            text-align: left;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
         }
     </style>
 </head>
 <body>
-    <div class="content-browser">
-        <header class="header">
-            <div class="header__left">
-                <div class="header__logo"></div>
-                <h1 class="header__title">Content Browser</h1>
+    <div class="app">
+        <!-- Sidebar -->
+        <div class="sidebar">
+            <!-- Sidebar Header -->
+            <div class="sidebar-header">
+                <div class="sidebar-nav">
+                    <button id="nav-back"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m15 18-6-6 6-6"/></svg></button>
+                    <button id="nav-forward"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg></button>
+                    <button id="nav-refresh"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-6.219-8.56"/><path d="M21 3v5h-5"/></svg></button>
+                    <div class="sidebar-search">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input type="text" id="sidebar-search" placeholder="搜索内容" />
+                    </div>
+                </div>
             </div>
-            
-            <div class="header__right">
-                <button class="btn btn--icon" title="Settings">
-                    <svg width="15" height="15" viewBox="0 0 15 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-                        <path d="M7.5 0C6.672 0 6 0.672 6 1.5V2.058C5.394 2.226 4.826 2.494 4.314 2.842L3.879 2.407C3.293 1.821 2.343 1.821 1.757 2.407L1.407 2.757C0.821 3.343 0.821 4.293 1.407 4.879L1.842 5.314C1.494 5.826 1.226 6.394 1.058 7H0.5C0.224 7 0 7.224 0 7.5V8C0 8.276 0.224 8.5 0.5 8.5H1.058C1.226 9.106 1.494 9.674 1.842 10.186L1.407 10.621C0.821 11.207 0.821 12.157 1.407 12.743L1.757 13.093C2.343 13.679 3.293 13.679 3.879 13.093L4.314 12.658C4.826 13.006 5.394 13.274 6 13.442V14C6 14.328 6.672 15 7.5 15H8C8.828 15 9.5 14.328 9.5 13.5V12.942C10.106 12.774 10.674 12.506 11.186 12.158L11.621 12.593C12.207 13.179 13.157 13.179 13.743 12.593L14.093 12.243C14.679 11.657 14.679 10.707 14.093 10.121L13.658 9.686C14.006 9.174 14.274 8.606 14.442 8H15C15.276 8 15.5 7.776 15.5 7.5V7C15.5 6.724 15.276 6.5 15 6.5H14.442C14.274 5.894 14.006 5.326 13.658 4.814L14.093 4.379C14.679 3.793 14.679 2.843 14.093 2.257L13.743 1.907C13.157 1.321 12.207 1.321 11.621 1.907L11.186 2.342C10.674 1.994 10.106 1.726 9.5 1.558V1C9.5 0.672 8.828 0 8 0H7.5ZM7.5 1H8C8.276 1 8.5 1.224 8.5 1.5V2.158L9.646 2.418L10.371 1.693C10.566 1.498 10.882 1.498 11.077 1.693L11.427 2.043C11.622 2.238 11.622 2.554 11.427 2.749L10.702 3.474L10.962 4.62H14C14.276 4.62 14.5 4.844 14.5 5.12V7C14.5 7.276 14.276 7.5 14 7.5H10.962L10.702 8.646L11.427 9.371C11.622 9.566 11.622 9.882 11.427 10.077L11.077 10.427C10.882 10.622 10.566 10.622 10.371 10.427L9.646 9.702L8.5 9.962V14C8.5 14.276 8.276 14.5 8 14.5H7.5C7.224 14.5 7 14.276 7 14V9.962L5.854 9.702L5.129 10.427C4.934 10.622 4.618 10.622 4.423 10.427L4.073 10.077C3.878 9.882 3.878 9.566 4.073 9.371L4.798 8.646L4.538 7.5H1C0.724 7.5 0.5 7.276 0.5 7V5.12C0.5 4.844 0.724 4.62 1 4.62H4.538L4.798 3.474L4.073 2.749C3.878 2.554 3.878 2.238 4.073 2.043L4.423 1.693C4.618 1.498 4.934 1.498 5.129 1.693L5.854 2.418L7 2.158V1.5C7 1.224 7.224 1 7.5 1ZM7.5 5C6.119 5 5 6.119 5 7.5C5 8.881 6.119 10 7.5 10C8.881 10 10 8.881 10 7.5C10 6.119 8.881 5 7.5 5Z" fill="currentColor"/>
-                    </svg>
+
+            <!-- Favorites Section -->
+            <div class="favorites-section">
+                <div class="favorites-header">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/></svg>
+                    <span>收藏夹</span>
+                </div>
+                <ul class="favorites-list" id="favorites-list">
+                    <!-- Favorites will be populated by JS -->
+                </ul>
+            </div>
+
+            <!-- Assets Section -->
+            <div class="assets-section">
+                <div class="assets-header">
+                    <span>Assets</span>
+                    <button id="add-root-folder"><svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg></button>
+                </div>
+                <ul class="folder-tree" id="folder-tree">
+                    <!-- Folders will be populated by JS -->
+                </ul>
+            </div>
+
+            <!-- Sidebar Footer -->
+            <div class="sidebar-footer">
+                <button id="add-root-button">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14"/><path d="M5 12h14"/></svg>
+                    <span>添加根目录</span>
                 </button>
             </div>
-        </header>
+        </div>
 
+        <!-- Main Content -->
         <div class="main-content">
-            <aside class="sidebar">
-                <div class="sidebar__header">Folders</div>
-                <div class="folder-tree">
-                    <div class="folder-item active">
-                        <span class="folder-item__icon">📁</span>
-                        <span>Content</span>
-                        <div class="folder-item__subfolders">
-                            <div class="folder-item">
-                                <span class="folder-item__icon">📁</span>
-                                <span>Blueprints</span>
+            <!-- Top Bar -->
+            <div class="top-bar">
+                <div class="top-bar-left">
+                    <button class="top-bar-button" id="save-button">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+                        <span>保存</span>
+                    </button>
+                    <button class="top-bar-button" id="import-button">
+                        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                        <span>导入</span>
+                    </button>
+                </div>
+                <div class="top-bar-right">
+                    <!-- Filter Section -->
+                    <div class="filter-section">
+                        <button class="filter-button" id="filter-button">
+                            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3"/></svg>
+                            <span id="filter-button-text">筛选</span>
+                        </button>
+                        <div class="filter-panel hidden" id="filter-panel">
+                            <div class="filter-panel-header">
+                                <span class="filter-panel-title">筛选</span>
+                                <button class="filter-panel-close" id="filter-panel-close">
+                                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+                                </button>
                             </div>
-                            <div class="folder-item">
-                                <span class="folder-item__icon">📁</span>
-                                <span>Materials</span>
+                            <div class="filter-panel-body">
+                                <div class="filter-section-title">资产类型</div>
+                                <div class="filter-options" id="filter-options">
+                                    <!-- Filter options will be populated by JS -->
+                                </div>
+                                <div class="filter-section-title">排序方式</div>
+                                <div class="sort-options" id="sort-options">
+                                    <div class="sort-option">
+                                        <input type="radio" id="sort-date" name="sort" value="date" checked />
+                                        <label for="sort-date">日期</label>
+                                    </div>
+                                    <div class="sort-option">
+                                        <input type="radio" id="sort-size" name="sort" value="size" />
+                                        <label for="sort-size">大小</label>
+                                    </div>
+                                    <div class="sort-option">
+                                        <input type="radio" id="sort-name" name="sort" value="name" />
+                                        <label for="sort-name">名称</label>
+                                    </div>
+                                </div>
                             </div>
-                            <div class="folder-item">
-                                <span class="folder-item__icon">📁</span>
-                                <span>Textures</span>
-                            </div>
-                            <div class="folder-item">
-                                <span class="folder-item__icon">📁</span>
-                                <span>Meshes</span>
-                            </div>
-                            <div class="folder-item">
-                                <span class="folder-item__icon">📁</span>
-                                <span>Animations</span>
+                            <div class="filter-panel-footer">
+                                <button class="filter-panel-button reset" id="reset-filter-button">重置</button>
                             </div>
                         </div>
                     </div>
-                    <div class="folder-item">
-                        <span class="folder-item__icon">📁</span>
-                        <span>Plugins</span>
-                    </div>
-                    <div class="folder-item">
-                        <span class="folder-item__icon">📁</span>
-                        <span>ThirdParty</span>
-                    </div>
-                </div>
-            </aside>
 
-            <main class="asset-view">
-                <div class="asset-view__header">
-                    <div class="asset-path">/Game/Content</div>
-                    <div class="view-controls">
-                        <button class="btn active">Grid</button>
-                        <button class="btn">List</button>
-                        <button class="btn">Details</button>
+                    <!-- Global Search -->
+                    <div class="global-search">
+                        <svg class="search-icon" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/></svg>
+                        <input type="text" id="global-search" placeholder="搜索内容" />
+                        <svg class="clear-icon hidden" id="clear-search" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
                     </div>
                 </div>
-                
-                <div class="asset-grid">
-                    <div class="asset-item">
-                        <div class="asset-item__thumbnail">🏗️</div>
-                        <div class="asset-item__name">BP_Character</div>
-                        <div class="asset-item__type">Blueprint</div>
-                    </div>
-                    <div class="asset-item">
-                        <div class="asset-item__thumbnail">🎨</div>
-                        <div class="asset-item__name">M_Metal</div>
-                        <div class="asset-item__type">Material</div>
-                    </div>
-                    <div class="asset-item">
-                        <div class="asset-item__thumbnail">🖼️</div>
-                        <div class="asset-item__name">T_Brick</div>
-                        <div class="asset-item__type">Texture</div>
-                    </div>
-                    <div class="asset-item">
-                        <div class="asset-item__thumbnail">🔲</div>
-                        <div class="asset-item__name">SM_Cube</div>
-                        <div class="asset-item__type">Static Mesh</div>
-                    </div>
-                    <div class="asset-item">
-                        <div class="asset-item__thumbnail">🏃</div>
-                        <div class="asset-item__name">A_Run</div>
-                        <div class="asset-item__type">Animation</div>
-                    </div>
-                    <div class="asset-item">
-                        <div class="asset-item__thumbnail">🏗️</div>
-                        <div class="asset-item__name">BP_Weapon</div>
-                        <div class="asset-item__type">Blueprint</div>
-                    </div>
-                    <div class="asset-item">
-                        <div class="asset-item__thumbnail">🎨</div>
-                        <div class="asset-item__name">M_Wood</div>
-                        <div class="asset-item__type">Material</div>
-                    </div>
-                    <div class="asset-item">
-                        <div class="asset-item__thumbnail">🖼️</div>
-                        <div class="asset-item__name">T_Grass</div>
-                        <div class="asset-item__type">Texture</div>
-                    </div>
+            </div>
+
+            <!-- View Toggle Bar -->
+            <div class="view-toggle-bar">
+                <div class="view-toggle-info" id="asset-count">0 items (0 selected)</div>
+                <div class="view-toggle-buttons">
+                    <button class="view-toggle-button" id="list-view-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+                    </button>
+                    <button class="view-toggle-button active" id="grid-view-button">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/></svg>
+                    </button>
                 </div>
-            </main>
+            </div>
+
+            <!-- Asset Grid -->
+            <div class="asset-grid grid-view" id="asset-grid">
+                <!-- Assets will be populated by JS -->
+            </div>
         </div>
-
-        <footer class="status-bar">
-            <div class="status-bar__left">
-                <span>8 assets found</span>
-                <span>Filter: All</span>
-            </div>
-            <div class="status-bar__right">
-                <span>View: Grid</span>
-                <span>Sort: Name</span>
-            </div>
-        </footer>
     </div>
 
     <script>
-        document.querySelectorAll('.folder-item').forEach(item => {
-            item.addEventListener('click', function(e) {
-                if (e.target !== this && !this.contains(e.target)) return;
-                
-                this.classList.toggle('expanded');
-                
-                document.querySelectorAll('.folder-item').forEach(folder => {
-                    folder.classList.remove('active');
-                });
-                this.classList.add('active');
-            });
-        });
+        // Mock data
+        const mockData = {
+            folders: [
+                {
+                    id: 'root',
+                    name: 'Content',
+                    parentId: null,
+                    children: [
+                        {
+                            id: 'chars',
+                            name: 'Characters',
+                            parentId: 'root',
+                            children: [
+                                {
+                                    id: 'warrior',
+                                    name: 'Warrior',
+                                    parentId: 'chars',
+                                    children: []
+                                },
+                                {
+                                    id: 'mage',
+                                    name: 'Mage',
+                                    parentId: 'chars',
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'env',
+                            name: 'Environment',
+                            parentId: 'root',
+                            children: [
+                                {
+                                    id: 'trees',
+                                    name: 'Trees',
+                                    parentId: 'env',
+                                    children: []
+                                },
+                                {
+                                    id: 'rocks',
+                                    name: 'Rocks',
+                                    parentId: 'env',
+                                    children: []
+                                }
+                            ]
+                        },
+                        {
+                            id: 'audio',
+                            name: 'Audio',
+                            parentId: 'root',
+                            children: []
+                        },
+                        {
+                            id: 'vfx',
+                            name: 'VFX',
+                            parentId: 'root',
+                            children: []
+                        }
+                    ]
+                }
+            ],
+            assets: [
+                { id: 'a1', name: 'Warrior_Idle', type: 'Anim', path: '/Content/Characters/Warrior', size: '2.4 MB', format: 'FBX', lastModified: '2023-10-25', parentId: 'warrior' },
+                { id: 'a2', name: 'Warrior_Run', type: 'Anim', path: '/Content/Characters/Warrior', size: '3.1 MB', format: 'FBX', lastModified: '2023-10-26', parentId: 'warrior' },
+                { id: 'a3', name: 'Warrior_Attack', type: 'Anim', path: '/Content/Characters/Warrior', size: '4.5 MB', format: 'FBX', lastModified: '2023-10-27', parentId: 'warrior' },
+                { id: 'm1', name: 'SK_Warrior', type: 'Model', path: '/Content/Characters/Warrior', size: '45.2 MB', format: 'FBX', lastModified: '2023-10-20', parentId: 'warrior' },
+                { id: 'm2', name: 'SK_Mage', type: 'Model', path: '/Content/Characters/Mage', size: '38.7 MB', format: 'FBX', lastModified: '2023-10-22', parentId: 'mage' },
+                { id: 's1', name: 'BGM_MainTheme', type: 'Audio', path: '/Content/Audio', size: '12.4 MB', format: 'WAV', lastModified: '2023-09-15', parentId: 'audio' },
+                { id: 's2', name: 'SFX_SwordHit', type: 'Audio', path: '/Content/Audio', size: '0.5 MB', format: 'WAV', lastModified: '2023-09-16', parentId: 'audio' },
+                { id: 'e1', name: 'P_Fireball', type: 'Effect', path: '/Content/VFX', size: '1.2 MB', format: 'UASSET', lastModified: '2023-11-01', parentId: 'vfx' },
+                { id: 'e2', name: 'P_Explosion', type: 'Effect', path: '/Content/VFX', size: '5.6 MB', format: 'UASSET', lastModified: '2023-11-02', parentId: 'vfx' },
+                { id: 'mat1', name: 'M_Grass', type: 'Material', path: '/Content/Environment', size: '8.2 MB', format: 'UASSET', lastModified: '2023-08-10', parentId: 'env' },
+                { id: 'mat2', name: 'M_Rock', type: 'Material', path: '/Content/Environment', size: '15.4 MB', format: 'UASSET', lastModified: '2023-08-12', parentId: 'env' }
+            ],
+            favorites: [
+                { id: 'fav1', name: 'Characters', path: '/Content/Characters' },
+                { id: 'fav2', name: 'VFX', path: '/Content/VFX' }
+            ]
+        };
 
-        document.querySelectorAll('.asset-item').forEach(item => {
-            item.addEventListener('click', function() {
-                document.querySelectorAll('.asset-item').forEach(asset => {
-                    asset.classList.remove('selected');
-                });
-                this.classList.add('selected');
-            });
-        });
+        // State
+        let state = {
+            currentFolderId: 'root',
+            selectedAssetIds: [],
+            searchPathQuery: '',
+            searchQuery: '',
+            filterTypes: [],
+            sortBy: 'date',
+            isFilterOpen: false,
+            viewMode: 'grid',
+            openFolders: new Set(['root', 'chars', 'env'])
+        };
 
-        document.querySelectorAll('.view-controls .btn').forEach(button => {
-            button.addEventListener('click', function() {
-                document.querySelectorAll('.view-controls .btn').forEach(btn => {
-                    btn.classList.remove('active');
-                });
-                this.classList.add('active');
+        // DOM Elements
+        const elements = {
+            folderTree: document.getElementById('folder-tree'),
+            favoritesList: document.getElementById('favorites-list'),
+            assetGrid: document.getElementById('asset-grid'),
+            filterButton: document.getElementById('filter-button'),
+            filterButtonText: document.getElementById('filter-button-text'),
+            filterPanel: document.getElementById('filter-panel'),
+            filterPanelClose: document.getElementById('filter-panel-close'),
+            filterOptions: document.getElementById('filter-options'),
+            resetFilterButton: document.getElementById('reset-filter-button'),
+            globalSearch: document.getElementById('global-search'),
+            clearSearch: document.getElementById('clear-search'),
+            sidebarSearch: document.getElementById('sidebar-search'),
+            listViewButton: document.getElementById('list-view-button'),
+            gridViewButton: document.getElementById('grid-view-button'),
+            assetCount: document.getElementById('asset-count'),
+            saveButton: document.getElementById('save-button'),
+            importButton: document.getElementById('import-button'),
+            addRootButton: document.getElementById('add-root-button')
+        };
+
+        // Helper functions
+        function getAssetColor(type) {
+            const colors = {
+                Anim: '#F2994A',
+                Model: '#2D9CDB',
+                Audio: '#9B59B6',
+                Effect: '#EB5757',
+                Material: '#6FCF97'
+            };
+            return colors[type] || '#808080';
+        }
+
+        function getAssetColorRgb(type) {
+            const color = getAssetColor(type);
+            const r = parseInt(color.slice(1, 3), 16);
+            const g = parseInt(color.slice(3, 5), 16);
+            const b = parseInt(color.slice(5, 7), 16);
+            return `${r}, ${g}, ${b}`;
+        }
+
+        function getAssetIcon(type, size = 16) {
+            const icons = {
+                Anim: '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 12a9 9 0 1 1-9-9c2.52 0 4.93 1 6.7 2.7l-3.36 3.36A4 4 0 0 1 10 11.17"/><path d="M12 12v9"/></svg>',
+                Model: '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/><path d="M12 12v4"/><path d="M9 8h6"/></svg>',
+                Audio: '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>',
+                Effect: '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 20h9"/><path d="M16.5 3.5a2.12 2.12 0 0 1 3 3L7 19l-4 1 1-4Z"/></svg>',
+                Material: '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>'
+            };
+            return icons[type] || '<svg width="' + size + '" height="' + size + '" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>';
+        }
+
+        function getAllDescendantIds(rootId, allFolders) {
+            let ids = [];
+            
+            function collect(nodes, targetId, collecting) {
+                for (const node of nodes) {
+                    let isMatch = collecting || node.id === targetId;
+                    
+                    if (isMatch) {
+                        ids.push(node.id);
+                    }
+                    
+                    if (node.children && node.children.length > 0) {
+                        collect(node.children, targetId, isMatch);
+                    }
+                }
+            }
+            
+            collect(allFolders, rootId, false);
+            return ids;
+        }
+
+        function filterAssets() {
+            const validFolderIds = getAllDescendantIds(state.currentFolderId, mockData.folders);
+            
+            let result = mockData.assets.filter(asset => {
+                if (state.searchQuery) {
+                    return asset.name.toLowerCase().includes(state.searchQuery.toLowerCase());
+                }
                 
-                const assetGrid = document.querySelector('.asset-grid');
-                if (this.textContent === 'List') {
-                    assetGrid.style.gridTemplateColumns = '1fr';
-                } else if (this.textContent === 'Grid') {
-                    assetGrid.style.gridTemplateColumns = 'repeat(auto-fill, minmax(120px, 1fr))';
+                if (!validFolderIds.includes(asset.parentId)) return false;
+                
+                if (state.filterTypes.length > 0 && !state.filterTypes.includes(asset.type)) return false;
+                
+                return true;
+            });
+            
+            result.sort((a, b) => {
+                if (state.sortBy === 'date') {
+                    return new Date(b.lastModified).getTime() - new Date(a.lastModified).getTime();
+                }
+                if (state.sortBy === 'size') {
+                    return parseFloat(b.size) - parseFloat(a.size);
+                }
+                return a.name.localeCompare(b.name);
+            });
+            
+            return result;
+        }
+
+        function renderFavorites() {
+            elements.favoritesList.innerHTML = mockData.favorites.map(fav => `
+                <li>
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 7h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                    <span>${fav.name}</span>
+                </li>
+            `).join('');
+        }
+
+        function renderFolderTree(folders = mockData.folders, level = 0) {
+            return folders.map(folder => {
+                const isOpen = state.openFolders.has(folder.id);
+                const isSelected = folder.id === state.currentFolderId;
+                const hasChildren = folder.children && folder.children.length > 0;
+                
+                return `
+                    <li class="folder-item">
+                        <div class="folder-header ${isSelected ? 'selected' : ''}" data-folder-id="${folder.id}">
+                            ${hasChildren ? `
+                                <div class="folder-toggle" data-folder-id="${folder.id}">
+                                    ${isOpen ? 
+                                        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m6 9 6 6 6-6"/></svg>' : 
+                                        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="m9 18 6-6-6-6"/></svg>'
+                                    }
+                                </div>
+                            ` : '<div class="folder-toggle"><div style="width: 12px;"></div></div>'}
+                            <svg class="folder-icon" width="14" height="14" viewBox="0 0 24 24" fill="${isSelected ? 'currentColor' : 'none'}" stroke="currentColor" stroke-width="2"><path d="M20 7h-4V4a2 2 0 0 0-2-2h-4a2 2 0 0 0-2 2v3H4a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2z"/></svg>
+                            <span class="folder-name">${folder.name}</span>
+                        </div>
+                        ${hasChildren ? `
+                            <ul class="folder-children ${isOpen ? 'open' : ''}">
+                                ${renderFolderTree(folder.children, level + 1)}
+                            </ul>
+                        ` : ''}
+                    </li>
+                `;
+            }).join('');
+        }
+
+        function renderFilterOptions() {
+            const assetTypes = ['Anim', 'Model', 'Audio', 'Effect', 'Material'];
+            elements.filterOptions.innerHTML = assetTypes.map(type => `
+                <div class="filter-option">
+                    <input type="checkbox" id="filter-${type}" value="${type}" ${state.filterTypes.includes(type) ? 'checked' : ''} />
+                    <label for="filter-${type}">${type}</label>
+                </div>
+            `).join('');
+        }
+
+        function renderAssets() {
+            const filteredAssets = filterAssets();
+            elements.assetCount.textContent = `${filteredAssets.length} items (${state.selectedAssetIds.length} selected)`;
+            
+            if (filteredAssets.length === 0) {
+                elements.assetGrid.innerHTML = `
+                    <div class="empty-state">
+                        <p>暂无资产，点击导入添加</p>
+                        <button id="empty-import-button">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+                            导入资产
+                        </button>
+                    </div>
+                `;
+                
+                document.getElementById('empty-import-button').addEventListener('click', () => {
+                    console.log('Import clicked');
+                });
+                return;
+            }
+            
+            if (state.viewMode === 'grid') {
+                elements.assetGrid.innerHTML = filteredAssets.map(asset => {
+                    const isSelected = state.selectedAssetIds.includes(asset.id);
+                    const assetColor = getAssetColor(asset.type);
+                    const assetColorRgb = getAssetColorRgb(asset.type);
+                    
+                    return `
+                        <div class="asset-card ${isSelected ? 'selected' : ''}" data-asset-id="${asset.id}" style="--asset-color: ${assetColor}; --asset-color-rgb: ${assetColorRgb};">
+                            <div class="asset-card-content">
+                                <div class="asset-thumbnail">
+                                    <div class="asset-type-tag">
+                                        ${getAssetIcon(asset.type)}
+                                    </div>
+                                    ${isSelected ? `
+                                        <div class="asset-selection-indicator" data-asset-id="${asset.id}">
+                                            <svg width="12" height="12" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2"><polyline points="20 6 9 17 4 12"/></svg>
+                                        </div>
+                                    ` : ''}
+                                    <div class="asset-placeholder">
+                                        ${getAssetIcon(asset.type, 48)}
+                                    </div>
+                                    <div class="asset-type-format">
+                                        ${asset.type} | ${asset.format}
+                                    </div>
+                                </div>
+                                <div class="asset-info">
+                                    <div class="asset-name" title="${asset.name}">${asset.name}</div>
+                                    <div class="asset-meta">
+                                        <span>${asset.type}</span>
+                                        <span>${asset.size}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="tooltip hidden">
+                                <div class="tooltip-title">${asset.name}</div>
+                                <div class="tooltip-content">
+                                    <div class="tooltip-label">Type:</div>
+                                    <div class="tooltip-value">${asset.type}</div>
+                                    <div class="tooltip-label">Path:</div>
+                                    <div class="tooltip-value" title="${asset.path}">${asset.path}</div>
+                                    <div class="tooltip-label">Size:</div>
+                                    <div class="tooltip-value">${asset.size} (${asset.format})</div>
+                                    <div class="tooltip-label">Modified:</div>
+                                    <div class="tooltip-value">${asset.lastModified}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).join('');
+            } else {
+                elements.assetGrid.innerHTML = filteredAssets.map(asset => {
+                    const isSelected = state.selectedAssetIds.includes(asset.id);
+                    
+                    return `
+                        <div class="asset-list-item ${isSelected ? 'selected' : ''}" data-asset-id="${asset.id}">
+                            <div class="asset-list-icon">
+                                <div style="width: 12px; height: 12px; background-color: #808080; border-radius: 50%;"></div>
+                            </div>
+                            <div class="asset-list-name">${asset.name}</div>
+                            <div class="asset-list-type">${asset.type}</div>
+                            <div class="asset-list-size">${asset.size}</div>
+                        </div>
+                    `;
+                }).join('');
+            }
+            
+            // Add event listeners for asset cards
+            document.querySelectorAll('.asset-card').forEach(card => {
+                const assetId = card.dataset.assetId;
+                
+                card.addEventListener('click', (e) => {
+                    if (e.ctrlKey) {
+                        toggleAssetSelection(assetId);
+                    } else if (e.shiftKey) {
+                        // Simple shift select logic
+                        selectAsset(assetId, true);
+                    } else {
+                        if (state.selectedAssetIds.includes(assetId)) {
+                            toggleAssetSelection(assetId);
+                        } else {
+                            selectAsset(assetId, false);
+                        }
+                    }
+                });
+                
+                // Selection indicator click
+                const indicator = card.querySelector('.asset-selection-indicator');
+                if (indicator) {
+                    indicator.addEventListener('click', (e) => {
+                        e.stopPropagation();
+                        toggleAssetSelection(assetId);
+                    });
+                }
+                
+                // Tooltip
+                let tooltipTimer;
+                card.addEventListener('mouseenter', () => {
+                    tooltipTimer = setTimeout(() => {
+                        const tooltip = card.querySelector('.tooltip');
+                        if (tooltip) {
+                            tooltip.classList.remove('hidden');
+                        }
+                    }, 200);
+                });
+                
+                card.addEventListener('mouseleave', () => {
+                    clearTimeout(tooltipTimer);
+                    const tooltip = card.querySelector('.tooltip');
+                    if (tooltip) {
+                        tooltip.classList.add('hidden');
+                    }
+                });
+            });
+            
+            // Add event listeners for list items
+            document.querySelectorAll('.asset-list-item').forEach(item => {
+                const assetId = item.dataset.assetId;
+                
+                item.addEventListener('click', (e) => {
+                    if (e.ctrlKey) {
+                        toggleAssetSelection(assetId);
+                    } else if (e.shiftKey) {
+                        selectAsset(assetId, true);
+                    } else {
+                        selectAsset(assetId, false);
+                    }
+                });
+            });
+        }
+
+        function selectAsset(id, multi) {
+            if (multi) {
+                if (!state.selectedAssetIds.includes(id)) {
+                    state.selectedAssetIds.push(id);
+                }
+            } else {
+                state.selectedAssetIds = [id];
+            }
+            renderAssets();
+        }
+
+        function toggleAssetSelection(id) {
+            if (state.selectedAssetIds.includes(id)) {
+                state.selectedAssetIds = state.selectedAssetIds.filter(assetId => assetId !== id);
+            } else {
+                state.selectedAssetIds.push(id);
+            }
+            renderAssets();
+        }
+
+        function updateFilterButtonText() {
+            if (state.filterTypes.length === 0) {
+                elements.filterButtonText.textContent = '筛选';
+                elements.filterButton.classList.remove('active');
+            } else {
+                if (state.filterTypes.length <= 2) {
+                    elements.filterButtonText.textContent = state.filterTypes.join(', ');
+                } else {
+                    elements.filterButtonText.textContent = `${state.filterTypes.slice(0, 2).join(', ')}...`;
+                }
+                elements.filterButton.classList.add('active');
+            }
+        }
+
+        // Event listeners
+        function setupEventListeners() {
+            // Folder tree toggle
+            elements.folderTree.addEventListener('click', (e) => {
+                const toggle = e.target.closest('.folder-toggle');
+                if (toggle) {
+                    e.stopPropagation();
+                    const folderId = toggle.dataset.folderId;
+                    if (state.openFolders.has(folderId)) {
+                        state.openFolders.delete(folderId);
+                    } else {
+                        state.openFolders.add(folderId);
+                    }
+                    elements.folderTree.innerHTML = renderFolderTree();
+                }
+                
+                const folderHeader = e.target.closest('.folder-header');
+                if (folderHeader) {
+                    const folderId = folderHeader.dataset.folderId;
+                    state.currentFolderId = folderId;
+                    elements.folderTree.innerHTML = renderFolderTree();
+                    renderAssets();
                 }
             });
-        });
+            
+            // Filter button
+            elements.filterButton.addEventListener('click', () => {
+                state.isFilterOpen = !state.isFilterOpen;
+                elements.filterPanel.classList.toggle('hidden', !state.isFilterOpen);
+            });
+            
+            // Filter panel close
+            elements.filterPanelClose.addEventListener('click', () => {
+                state.isFilterOpen = false;
+                elements.filterPanel.classList.add('hidden');
+            });
+            
+            // Filter options
+            elements.filterOptions.addEventListener('change', (e) => {
+                if (e.target.type === 'checkbox') {
+                    const type = e.target.value;
+                    if (e.target.checked) {
+                        if (!state.filterTypes.includes(type)) {
+                            state.filterTypes.push(type);
+                        }
+                    } else {
+                        state.filterTypes = state.filterTypes.filter(t => t !== type);
+                    }
+                    updateFilterButtonText();
+                    renderAssets();
+                }
+            });
+            
+            // Sort options
+            elements.sortOptions.addEventListener('change', (e) => {
+                if (e.target.type === 'radio') {
+                    state.sortBy = e.target.value;
+                    renderAssets();
+                }
+            });
+            
+            // Reset filter
+            elements.resetFilterButton.addEventListener('click', () => {
+                state.filterTypes = [];
+                state.sortBy = 'date';
+                document.querySelectorAll('#filter-options input').forEach(input => {
+                    input.checked = false;
+                });
+                document.querySelector('#sort-date').checked = true;
+                updateFilterButtonText();
+                renderAssets();
+            });
+            
+            // Global search
+            elements.globalSearch.addEventListener('input', (e) => {
+                state.searchQuery = e.target.value;
+                elements.clearSearch.classList.toggle('hidden', !state.searchQuery);
+                renderAssets();
+            });
+            
+            // Clear search
+            elements.clearSearch.addEventListener('click', () => {
+                state.searchQuery = '';
+                elements.globalSearch.value = '';
+                elements.clearSearch.classList.add('hidden');
+                renderAssets();
+            });
+            
+            // Sidebar search
+            elements.sidebarSearch.addEventListener('input', (e) => {
+                state.searchPathQuery = e.target.value;
+                // Implement search filtering logic here if needed
+            });
+            
+            // View mode toggle
+            elements.listViewButton.addEventListener('click', () => {
+                state.viewMode = 'list';
+                elements.listViewButton.classList.add('active');
+                elements.gridViewButton.classList.remove('active');
+                elements.assetGrid.classList.remove('grid-view');
+                elements.assetGrid.classList.add('list-view');
+                renderAssets();
+            });
+            
+            elements.gridViewButton.addEventListener('click', () => {
+                state.viewMode = 'grid';
+                elements.gridViewButton.classList.add('active');
+                elements.listViewButton.classList.remove('active');
+                elements.assetGrid.classList.remove('list-view');
+                elements.assetGrid.classList.add('grid-view');
+                renderAssets();
+            });
+            
+            // Save button
+            elements.saveButton.addEventListener('click', () => {
+                console.log('Save clicked');
+            });
+            
+            // Import button
+            elements.importButton.addEventListener('click', () => {
+                console.log('Import clicked');
+            });
+            
+            // Add root button
+            elements.addRootButton.addEventListener('click', () => {
+                console.log('Add root folder clicked');
+            });
+            
+            // Click outside to close filter panel
+            document.addEventListener('click', (e) => {
+                if (!elements.filterButton.contains(e.target) && !elements.filterPanel.contains(e.target)) {
+                    state.isFilterOpen = false;
+                    elements.filterPanel.classList.add('hidden');
+                }
+            });
+        }
+
+        // Initialize app
+        function init() {
+            renderFavorites();
+            elements.folderTree.innerHTML = renderFolderTree();
+            renderFilterOptions();
+            renderAssets();
+            setupEventListeners();
+        }
+
+        // Run init
+        init();
     </script>
 </body>
 </html>
