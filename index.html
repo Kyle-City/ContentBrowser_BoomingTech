@@ -819,6 +819,11 @@
             overflow-y: auto;
             padding: 16px;
             position: relative;
+            display: block;
+            align-content: start !important;
+            justify-content: start !important;
+            align-items: start !important;
+            justify-items: start !important;
         }
 
         .asset-grid.grid-view {
@@ -1907,6 +1912,14 @@
             }
             
             if (state.viewMode === 'grid') {
+                // 添加内联样式确保行间距为24px
+                elements.assetGrid.style.display = 'grid';
+                elements.assetGrid.style.gridTemplateColumns = 'repeat(6, 144px)';
+                elements.assetGrid.style.gap = '24px';
+                elements.assetGrid.style.rowGap = '24px';
+                elements.assetGrid.style.columnGap = '24px';
+                elements.assetGrid.style.alignContent = 'start';
+                elements.assetGrid.style.justifyContent = 'start';
                 elements.assetGrid.innerHTML = filteredAssets.map(asset => {
                     const isSelected = state.selectedAssetIds.includes(asset.id);
                     
@@ -2076,6 +2089,10 @@
                     }
                 }).join('');
             } else {
+                // 重置内联样式以避免影响列表视图
+                elements.assetGrid.style.display = '';
+                elements.assetGrid.style.gridTemplateColumns = '';
+                elements.assetGrid.style.gap = '';
                 elements.assetGrid.innerHTML = filteredAssets.map(asset => {
                     const isSelected = state.selectedAssetIds.includes(asset.id);
                     
