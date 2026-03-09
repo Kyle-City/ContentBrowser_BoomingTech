@@ -101,12 +101,14 @@
         }
 
         .nav-button svg {
-            width: 14px;
-            height: 14px;
+            width: 16px;
+            height: 16px;
         }
 
         .nav-button img {
             display: block;
+            width: 16px;
+            height: 16px;
         }
 
         .sidebar-filter-search {
@@ -629,8 +631,116 @@
             background-color: var(--bg-light);
         }
 
+        .sort-button.active {
+            background-color: var(--primary);
+            color: #FFFFFF;
+            box-shadow: inset 0px 2px 4px 1px rgba(0, 0, 0, 0.05);
+        }
+
         .sort-button img {
             display: block;
+        }
+
+        /* Sort Dropdown Panel */
+        .sort-panel {
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 12px;
+            background-color: #1A1A1A;
+            border: 1px solid #333333;
+            border-radius: 4px;
+            box-shadow: 0px 12px 40px 0px rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(24px);
+            z-index: 1000;
+            width: 200px;
+            padding: 16px;
+        }
+
+        .sort-panel.hidden {
+            display: none;
+        }
+
+        .sort-options {
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+        }
+
+        .sort-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            cursor: pointer;
+        }
+
+        .sort-option-icon {
+            width: 15px;
+            height: 15px;
+            flex-shrink: 0;
+        }
+
+        .sort-option-icon img {
+            width: 15px;
+            height: 15px;
+            display: block;
+        }
+
+        .sort-option-label {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            color: #888888;
+            cursor: pointer;
+        }
+
+        .sort-option.selected .sort-option-label {
+            color: #FFFFFF;
+        }
+
+        .sort-panel-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 16px;
+            padding-top: 8px;
+            border-top: 1px solid #333333;
+        }
+
+        .sort-reset-btn {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            color: #888888;
+            background: transparent;
+            border: none;
+            cursor: pointer;
+            padding: 6px 0;
+        }
+
+        .sort-reset-btn:hover {
+            color: #FFFFFF;
+        }
+
+        .sort-apply-btn {
+            width: 50px;
+            height: 24px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background-color: var(--primary);
+            color: #FFFFFF;
+            border: none;
+            border-radius: 4px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            cursor: pointer;
+            box-shadow: 0px 1px 2px 0px rgba(0, 0, 0, 0.05);
+        }
+
+        .sort-apply-btn:hover {
+            background-color: var(--primary-hover);
         }
 
         .filter-section {
@@ -1627,12 +1737,39 @@
                 </div>
                 <div class="top-bar-right">
                     <!-- Sort Section -->
-                    <div class="sort-section">
+                    <div class="sort-section" style="position: relative;">
                         <button class="sort-button" id="sort-button">
                             <img src="image/TopBar/sort.png" alt="Sort" width="14" height="14">
                             <span>排序</span>
                             <img src="image/TopBar/pull-down.png" alt="Dropdown" width="14" height="14">
                         </button>
+                        <!-- Sort Dropdown Panel -->
+                        <div class="sort-panel hidden" id="sort-panel">
+                            <div class="sort-options">
+                                <div class="sort-option" data-sort="alphabet">
+                                    <div class="sort-option-icon">
+                                        <img src="image/TopBar/未选中.png" alt="未选中" width="15" height="15">
+                                    </div>
+                                    <span class="sort-option-label">按首字母排序</span>
+                                </div>
+                                <div class="sort-option selected" data-sort="date">
+                                    <div class="sort-option-icon">
+                                        <img src="image/TopBar/选中.png" alt="选中" width="15" height="15">
+                                    </div>
+                                    <span class="sort-option-label">按修改时间</span>
+                                </div>
+                                <div class="sort-option" data-sort="size">
+                                    <div class="sort-option-icon">
+                                        <img src="image/TopBar/未选中.png" alt="未选中" width="15" height="15">
+                                    </div>
+                                    <span class="sort-option-label">按文件大小</span>
+                                </div>
+                            </div>
+                            <div class="sort-panel-footer">
+                                <button class="sort-reset-btn" id="sort-reset">重置</button>
+                                <button class="sort-apply-btn" id="sort-apply">应用</button>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Global Search -->
@@ -1743,6 +1880,7 @@
             filterTypes: [],
             sortBy: 'date',
             isFilterOpen: false,
+            isSortOpen: false,
             viewMode: 'grid',
             openFolders: new Set(['root', 'animations']),
             navigationHistory: ['root'],
@@ -1781,7 +1919,11 @@
             navRefresh: document.getElementById('nav-refresh'),
             breadcrumbPath: document.getElementById('breadcrumb-path'),
             statsCount: document.getElementById('stats-count'),
-            statsSelected: document.getElementById('stats-selected')
+            statsSelected: document.getElementById('stats-selected'),
+            sortButton: document.getElementById('sort-button'),
+            sortPanel: document.getElementById('sort-panel'),
+            sortReset: document.getElementById('sort-reset'),
+            sortApply: document.getElementById('sort-apply')
         };
 
         // Helper functions
@@ -2679,6 +2821,99 @@
                 if (elements.filterButton && elements.filterPanel && !elements.filterButton.contains(e.target) && !elements.filterPanel.contains(e.target)) {
                     state.isFilterOpen = false;
                     elements.filterPanel.classList.add('hidden');
+                }
+            });
+
+            // Sort button click
+            if (elements.sortButton && elements.sortPanel) {
+                elements.sortButton.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    state.isSortOpen = !state.isSortOpen;
+                    
+                    // Close other panels
+                    if (elements.filterPanel) {
+                        elements.filterPanel.classList.add('hidden');
+                        state.isFilterOpen = false;
+                    }
+                    
+                    // Toggle sort panel
+                    elements.sortPanel.classList.toggle('hidden', !state.isSortOpen);
+                    elements.sortButton.classList.toggle('active', state.isSortOpen);
+                });
+            }
+
+            // Sort options click
+            const sortOptions = document.querySelectorAll('.sort-option');
+            sortOptions.forEach(option => {
+                option.addEventListener('click', (e) => {
+                    // Remove selected from all options and reset icons
+                    sortOptions.forEach(opt => {
+                        opt.classList.remove('selected');
+                        const iconImg = opt.querySelector('.sort-option-icon img');
+                        if (iconImg) {
+                            iconImg.src = 'image/TopBar/未选中.png';
+                            iconImg.alt = '未选中';
+                        }
+                    });
+                    // Add selected to clicked option and set selected icon
+                    option.classList.add('selected');
+                    const selectedIconImg = option.querySelector('.sort-option-icon img');
+                    if (selectedIconImg) {
+                        selectedIconImg.src = 'image/TopBar/选中.png';
+                        selectedIconImg.alt = '选中';
+                    }
+                    
+                    // Update sort value
+                    state.sortBy = option.dataset.sort;
+                });
+            });
+
+            // Sort reset button
+            if (elements.sortReset) {
+                elements.sortReset.addEventListener('click', () => {
+                    state.sortBy = 'date';
+                    document.querySelectorAll('.sort-option').forEach(opt => {
+                        opt.classList.remove('selected');
+                        const iconImg = opt.querySelector('.sort-option-icon img');
+                        if (iconImg) {
+                            iconImg.src = 'image/TopBar/未选中.png';
+                            iconImg.alt = '未选中';
+                        }
+                    });
+                    const dateOption = document.querySelector('.sort-option[data-sort="date"]');
+                    if (dateOption) {
+                        dateOption.classList.add('selected');
+                        const dateIconImg = dateOption.querySelector('.sort-option-icon img');
+                        if (dateIconImg) {
+                            dateIconImg.src = 'image/TopBar/选中.png';
+                            dateIconImg.alt = '选中';
+                        }
+                    }
+                });
+            }
+
+            // Sort apply button
+            if (elements.sortApply) {
+                elements.sortApply.addEventListener('click', () => {
+                    renderAssets();
+                    state.isSortOpen = false;
+                    if (elements.sortPanel) {
+                        elements.sortPanel.classList.add('hidden');
+                    }
+                    if (elements.sortButton) {
+                        elements.sortButton.classList.remove('active');
+                    }
+                });
+            }
+
+            // Click outside to close sort panel
+            document.addEventListener('click', (e) => {
+                if (elements.sortButton && elements.sortPanel && 
+                    !elements.sortButton.contains(e.target) && 
+                    !elements.sortPanel.contains(e.target)) {
+                    state.isSortOpen = false;
+                    elements.sortPanel.classList.add('hidden');
+                    elements.sortButton.classList.remove('active');
                 }
             });
         }
