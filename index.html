@@ -788,18 +788,28 @@
         .global-search input {
             width: 100%;
             height: 100%;
-            background-color: var(--bg-medium);
-            border: 1px solid var(--bg-light);
+            background-color: #252526;
+            border: 1px solid #3F3F46;
             border-radius: 4px;
-            font-size: 15px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 500;
+            font-size: 12px;
             padding: 0 32px 0 16px;
-            color: var(--text-primary);
+            color: #888888;
             outline: none;
             transition: all 0.2s;
         }
 
         .global-search input:focus {
             border-color: var(--primary);
+            color: var(--text-primary);
+        }
+
+        .global-search input::placeholder {
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 500;
+            font-size: 12px;
+            color: #888888;
         }
 
         .global-search img {
@@ -807,11 +817,79 @@
             right: 8px;
             top: 50%;
             transform: translateY(-50%);
+            width: 16px;
+            height: 12px;
         }
 
+        /* Breadcrumb Bar */
+        .breadcrumb-bar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 4px 16px;
+            background-color: #151515;
+            border-top: 1px solid #3F3F46;
+            box-shadow: 0px -2px 5px 0px rgba(0, 0, 0, 0.1);
+            height: auto;
+            min-height: 28px;
+        }
 
+        .breadcrumb-path {
+            display: flex;
+            align-items: center;
+            gap: 0;
+        }
 
+        .breadcrumb-home {
+            padding: 0 4px 0 0;
+            cursor: pointer;
+            opacity: 0.8;
+            transition: opacity 0.2s;
+        }
 
+        .breadcrumb-home:hover {
+            opacity: 1;
+        }
+
+        .breadcrumb-arrow {
+            padding: 0 2px;
+            opacity: 0.6;
+        }
+
+        .breadcrumb-item {
+            padding: 2px 4px;
+            font-family: 'Inter', system-ui, sans-serif;
+            font-weight: 400;
+            font-size: 11px;
+            line-height: 1.45em;
+            color: #FFFFFF;
+            cursor: pointer;
+            border-radius: 4px;
+            transition: background-color 0.2s;
+        }
+
+        .breadcrumb-item:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .breadcrumb-current {
+            font-weight: 500;
+        }
+
+        .breadcrumb-stats {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .stats-count,
+        .stats-selected {
+            font-family: 'Dream Han Sans CN', system-ui, sans-serif;
+            font-weight: 613;
+            font-size: 11px;
+            line-height: 1.5em;
+            color: #888888;
+        }
 
         /* Asset Grid */
         .asset-grid {
@@ -1398,7 +1476,7 @@
 
         .folder-top-empty {
             width: 144px;
-            height: 25px;
+            height: 23px;
             flex-shrink: 0;
         }
 
@@ -1433,7 +1511,7 @@
 
         .folder-bottom-empty {
             width: 144px;
-            height: 22px;
+            height: 24px;
             flex-shrink: 0;
         }
 
@@ -1544,6 +1622,17 @@
             <!-- Asset Grid -->
             <div class="asset-grid grid-view" id="asset-grid">
                 <!-- Assets will be populated by JS -->
+            </div>
+
+            <!-- Breadcrumb Bar -->
+            <div class="breadcrumb-bar">
+                <div class="breadcrumb-path" id="breadcrumb-path">
+                    <!-- 动态生成路径 -->
+                </div>
+                <div class="breadcrumb-stats">
+                    <span class="stats-count" id="stats-count">0 个文件</span>
+                    <span class="stats-selected" id="stats-selected"></span>
+                </div>
             </div>
         </div>
     </div>
@@ -1663,7 +1752,10 @@
             sourcesSettingsBtn: document.getElementById('sources-settings'),
             navBack: document.getElementById('nav-back'),
             navForward: document.getElementById('nav-forward'),
-            navRefresh: document.getElementById('nav-refresh')
+            navRefresh: document.getElementById('nav-refresh'),
+            breadcrumbPath: document.getElementById('breadcrumb-path'),
+            statsCount: document.getElementById('stats-count'),
+            statsSelected: document.getElementById('stats-selected')
         };
 
         // Helper functions
@@ -1791,6 +1883,9 @@
             }
         }
 
+        // 将 navigateToFolder 挂载到 window 对象，以便 HTML onclick 可以调用
+        window.navigateToFolder = navigateToFolder;
+
 
 
         function renderFolderTree(folders = mockData.folders, level = 0) {
@@ -1890,8 +1985,81 @@
             `).join('');
         }
 
+        // 获取当前文件夹的完整路径
+        function getCurrentFolderPath() {
+            const path = [];
+            let currentId = state.currentFolderId;
+            
+            function findFolder(folders, targetId) {
+                for (const folder of folders) {
+                    if (folder.id === targetId) {
+                        return folder;
+                    }
+                    if (folder.children && folder.children.length > 0) {
+                        const found = findFolder(folder.children, targetId);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            }
+            
+            function findPath(folders, targetId, currentPath) {
+                for (const folder of folders) {
+                    const newPath = [...currentPath, folder];
+                    if (folder.id === targetId) {
+                        return newPath;
+                    }
+                    if (folder.children && folder.children.length > 0) {
+                        const found = findPath(folder.children, targetId, newPath);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            }
+            
+            return findPath(mockData.folders, currentId, []) || [];
+        }
+
+        // 渲染面包屑导航
+        function renderBreadcrumb() {
+            if (!elements.breadcrumbPath) return;
+            
+            const path = getCurrentFolderPath();
+            
+            let html = `<img class="breadcrumb-home" src="image/content/home.png" alt="Home" width="15" height="12" onclick="navigateToFolder('root')">`;
+            
+            path.forEach((folder, index) => {
+                const isLast = index === path.length - 1;
+                html += `<img class="breadcrumb-arrow" src="image/content/Iconright.png" alt=">" width="8" height="7">`;
+                html += `<span class="breadcrumb-item ${isLast ? 'breadcrumb-current' : ''}" onclick="navigateToFolder('${folder.id}')">${folder.name}</span>`;
+            });
+            
+            elements.breadcrumbPath.innerHTML = html;
+        }
+
+        // 更新统计信息
+        function updateStats() {
+            if (!elements.statsCount || !elements.statsSelected) return;
+            
+            const filteredAssets = filterAssets();
+            const totalCount = filteredAssets.length;
+            const selectedCount = state.selectedAssetIds.length;
+            
+            elements.statsCount.textContent = `${totalCount} 个文件`;
+            
+            if (selectedCount > 0) {
+                elements.statsSelected.textContent = `(选中 ${selectedCount} 个文件)`;
+            } else {
+                elements.statsSelected.textContent = '';
+            }
+        }
+
         function renderAssets() {
             const filteredAssets = filterAssets();
+            
+            // 更新面包屑和统计
+            renderBreadcrumb();
+            updateStats();
 
             
             if (filteredAssets.length === 0) {
