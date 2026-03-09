@@ -1752,9 +1752,9 @@
                                     </div>
                                     <span class="sort-option-label">按首字母排序</span>
                                 </div>
-                                <div class="sort-option selected" data-sort="date">
+                                <div class="sort-option" data-sort="date">
                                     <div class="sort-option-icon">
-                                        <img src="image/TopBar/选中.png" alt="选中" width="15" height="15">
+                                        <img src="image/TopBar/未选中.png" alt="未选中" width="15" height="15">
                                     </div>
                                     <span class="sort-option-label">按修改时间</span>
                                 </div>
@@ -1878,7 +1878,7 @@
             searchPathQuery: '',
             searchQuery: '',
             filterTypes: [],
-            sortBy: 'date',
+            sortBy: 'default',
             isFilterOpen: false,
             isSortOpen: false,
             viewMode: 'grid',
@@ -2009,9 +2009,64 @@
                 return true;
             });
             
-
+            // 应用排序
+            result = sortAssets(result, state.sortBy);
             
             return result;
+        }
+
+        // 排序资产
+        function sortAssets(assets, sortBy) {
+            const sorted = [...assets];
+            
+            switch(sortBy) {
+                case 'alphabet':
+                    // 按首字母排序
+                    sorted.sort((a, b) => a.name.localeCompare(b.name, 'zh-CN'));
+                    break;
+                case 'size':
+                    // 按文件大小排序
+                    sorted.sort((a, b) => {
+                        const sizeA = parseFileSize(a.size);
+                        const sizeB = parseFileSize(b.size);
+                        return sizeB - sizeA; // 从大到小
+                    });
+                    break;
+                case 'date':
+                    // 按修改时间排序（最新的在前）
+                    sorted.sort((a, b) => new Date(b.lastModified) - new Date(a.lastModified));
+                    break;
+                case 'default':
+                default:
+                    // 保持原始顺序，不进行排序
+                    break;
+            }
+            
+            return sorted;
+        }
+
+        // 解析文件大小为字节数
+        function parseFileSize(sizeStr) {
+            if (!sizeStr || sizeStr === 'N/A') return 0;
+            
+            const units = {
+                'B': 1,
+                'KB': 1024,
+                'KiB': 1024,
+                'MB': 1024 * 1024,
+                'MiB': 1024 * 1024,
+                'GB': 1024 * 1024 * 1024,
+                'GiB': 1024 * 1024 * 1024
+            };
+            
+            const match = sizeStr.match(/^([\d.]+)\s*(B|KB|KiB|MB|MiB|GB|GiB)$/i);
+            if (match) {
+                const value = parseFloat(match[1]);
+                const unit = match[2];
+                return value * (units[unit] || 1);
+            }
+            
+            return 0;
         }
 
         function filterFolders(folders, query) {
@@ -2865,13 +2920,17 @@
                     
                     // Update sort value
                     state.sortBy = option.dataset.sort;
+                    
+                    // 立即应用排序
+                    renderAssets();
                 });
             });
 
             // Sort reset button
             if (elements.sortReset) {
                 elements.sortReset.addEventListener('click', () => {
-                    state.sortBy = 'date';
+                    state.sortBy = 'default';
+                    // 清除所有选中状态
                     document.querySelectorAll('.sort-option').forEach(opt => {
                         opt.classList.remove('selected');
                         const iconImg = opt.querySelector('.sort-option-icon img');
@@ -2880,15 +2939,9 @@
                             iconImg.alt = '未选中';
                         }
                     });
-                    const dateOption = document.querySelector('.sort-option[data-sort="date"]');
-                    if (dateOption) {
-                        dateOption.classList.add('selected');
-                        const dateIconImg = dateOption.querySelector('.sort-option-icon img');
-                        if (dateIconImg) {
-                            dateIconImg.src = 'image/TopBar/选中.png';
-                            dateIconImg.alt = '选中';
-                        }
-                    }
+                    
+                    // 立即应用排序（回到默认顺序）
+                    renderAssets();
                 });
             }
 
