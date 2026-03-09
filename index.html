@@ -1038,6 +1038,16 @@
             justify-content: start !important;
             align-items: start !important;
             justify-items: start !important;
+            z-index: 100;
+        }
+
+        /* Selection box for drag selection */
+        .selection-box {
+            position: absolute;
+            border: 2px solid var(--primary);
+            background-color: rgba(0, 122, 255, 0.2);
+            pointer-events: none;
+            z-index: 1000;
         }
 
         .asset-grid.grid-view {
@@ -1433,7 +1443,7 @@
         /* Tooltip */
         .tooltip {
             position: absolute;
-            z-index: 50;
+            z-index: 1000;
             top: 0;
             width: 280px;
             background: rgba(17, 17, 17, 0.7);
@@ -1886,7 +1896,11 @@
             navigationHistory: ['root'],
             navigationIndex: 0,
             sidebarFilterQuery: '',
-            isCollectionsOpen: true
+            isCollectionsOpen: true,
+            // Drag selection state
+            isDragging: false,
+            dragStart: { x: 0, y: 0 },
+            selectionBox: null
         };
 
         // DOM Elements
@@ -2583,6 +2597,98 @@
                     if (!e.target.closest('.asset-card')) {
                         state.selectedAssetIds = [];
                         renderAssets();
+                    }
+                });
+
+                // Drag selection functionality
+                elements.assetGrid.addEventListener('mousedown', (e) => {
+                    // Only start drag if clicking on empty space (not on an asset card)
+                    if (!e.target.closest('.asset-card')) {
+                        state.isDragging = true;
+                        const rect = elements.assetGrid.getBoundingClientRect();
+                        state.dragStart = {
+                            x: e.clientX - rect.left,
+                            y: e.clientY - rect.top
+                        };
+                        
+                        // Create selection box element
+                        state.selectionBox = document.createElement('div');
+                        state.selectionBox.className = 'selection-box';
+                        state.selectionBox.style.left = state.dragStart.x + 'px';
+                        state.selectionBox.style.top = state.dragStart.y + 'px';
+                        state.selectionBox.style.width = '0';
+                        state.selectionBox.style.height = '0';
+                        elements.assetGrid.appendChild(state.selectionBox);
+                    }
+                });
+
+                elements.assetGrid.addEventListener('mousemove', (e) => {
+                    if (state.isDragging && state.selectionBox) {
+                        const rect = elements.assetGrid.getBoundingClientRect();
+                        const currentX = e.clientX - rect.left;
+                        const currentY = e.clientY - rect.top;
+                        
+                        // Calculate selection box dimensions
+                        const left = Math.min(state.dragStart.x, currentX);
+                        const top = Math.min(state.dragStart.y, currentY);
+                        const width = Math.abs(currentX - state.dragStart.x);
+                        const height = Math.abs(currentY - state.dragStart.y);
+                        
+                        // Update selection box position and size
+                        state.selectionBox.style.left = left + 'px';
+                        state.selectionBox.style.top = top + 'px';
+                        state.selectionBox.style.width = width + 'px';
+                        state.selectionBox.style.height = height + 'px';
+                    }
+                });
+
+                elements.assetGrid.addEventListener('mouseup', (e) => {
+                    if (state.isDragging) {
+                        state.isDragging = false;
+                        
+                        if (state.selectionBox) {
+                            // Calculate selection box boundaries
+                            const boxRect = state.selectionBox.getBoundingClientRect();
+                            const assetGridRect = elements.assetGrid.getBoundingClientRect();
+                            
+                            // Find all asset cards within the selection box
+                            const selectedAssets = [];
+                            document.querySelectorAll('.asset-card').forEach(card => {
+                                const cardRect = card.getBoundingClientRect();
+                                
+                                // Check if card intersects with selection box
+                                if (
+                                    cardRect.left < boxRect.right &&
+                                    cardRect.right > boxRect.left &&
+                                    cardRect.top < boxRect.bottom &&
+                                    cardRect.bottom > boxRect.top
+                                ) {
+                                    const assetId = card.dataset.assetId;
+                                    if (assetId) {
+                                        selectedAssets.push(assetId);
+                                    }
+                                }
+                            });
+                            
+                            // Update selected assets
+                            if (selectedAssets.length > 0) {
+                                state.selectedAssetIds = selectedAssets;
+                                renderAssets();
+                            }
+                            
+                            // Remove selection box
+                            state.selectionBox.remove();
+                            state.selectionBox = null;
+                        }
+                    }
+                });
+
+                // Handle mouse leaving the asset grid while dragging
+                elements.assetGrid.addEventListener('mouseleave', (e) => {
+                    if (state.isDragging && state.selectionBox) {
+                        state.isDragging = false;
+                        state.selectionBox.remove();
+                        state.selectionBox = null;
                     }
                 });
             }
